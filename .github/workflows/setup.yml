@@ -15,11 +15,7 @@ jobs:
         with:
           python-version: 3.10.8
           cache: pip
-  tests:
-    name: Run Test
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Install requirements
         run: pip install -r requirements.txt
 
