@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  tests:
+  setup:
     name: Setup OS
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +15,10 @@ jobs:
         with:
           python-version: 3.10.8
           cache: pip
-      
+  tests:
+    name: Run Test
+    runs-on: ubuntu-latest
+    steps:
       - name: Install requirements
         run: pip install -r requirements.txt
 
