@@ -17,6 +17,7 @@ jobs:
           cache: pip
   tests:
     name: Run Test
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Install requirements
