@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!--Required meta tags-->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	{% block styles %}
+    {{ bootstrap.load_css() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    {% endblock %}
+	<!--Bootstrap css-->
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+	{%if title%}
+	<title>Flask Blog - {{title}}</title>
+	{%else%}
+		<title>Flask Blog</title>
+	{% endif %}
+</head>
+<body>
+	<header class="site-header">
+		<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+			<div class="container">
+				<a class="navbar-brand mr-4" href="/">Flask Blog</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" data-target="navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarToggle">
+					<div class="navbar-nav mr-auto">
+						<a class="nav-item py-2 navlink" href="{{ url_for('home') }}">Home</a>
+						<a class="nav-item py-2 navlink" href="{{ url_for('about') }}">About</a>
+					</div>
+					<!--Navbar right side-->
+					<div class="navbar-nav">
+						{% if current_user.is_anonymous %}
+						<a class="nav-item py-2 navlink" href="{{ url_for('login') }}">Login</a>
+						<a class="nav-item py-2 navlink" href="{{ url_for('register') }}">Register</a>
+						{% else %}
+						<a href="{{ url_for('user', email=current_user.email) }}" class="nav-item navlink">
+							<img class=" float-end img-thumbnail rounded-circle" src="{{ current_user.image_file }}" style="width: 5%;">
+						</a>
+						<a class="nav-item py-2 navlink" href="{{ url_for('logout') }}">Log-out</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<main role="main" class="container">
+		<div class="row">
+			<div class="col-md-8">
+				{% with messages = get_flashed_messages(with_categories=True) %}
+					{% if messages %}
+						{% for category, message in messages %}
+							<div class="alert alert-{{ category }}">
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endif %}
+				{% endwith %}
+				{% block content %}{% endblock %}
+			</div>
+			{% if not current_user.is_anonymous %}
+			<div class="col-md-4">
+				<div class="content-section">
+					<h3>Hello {{ current_user.lastname }},</h3>
+					<p class="text-muted">Let's get planning
+						<ul>
+							<a class="p-0" href="">
+								
+								<li class="list-group-item list-group-item-light">Notiifications</li>
+							</a>
+							<a class="p-0" href="">
+								<li class="list-group-item list-group-item-light">Orders</li>
+							</a>
+							<a class="p-0" href="">
+								<li class="list-group-item list-group-item-light">Payment</li>
+								
+							</a>
+						</ul>
+					</p>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</main>
+	<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/intlTelInput.min.js"></script>
+	{% block scripts %}
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+</html>

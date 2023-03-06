@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block content %}
+    <h3>Send Message to - <p class=" text-muted">{{ recipient }}</p></h3>
+   
+            {{ render_form(form) }}
+  
+{% endblock %}

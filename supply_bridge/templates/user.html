@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+	<div class=" col-12 p-4 content-section d-flex">
+		<div class="rounded w-25">
+			<img class=" rounded-circle w-100" src="{{ user.image_file }}" alt="" srcset="">
+		</div>
+		<div id="user-details" class="p-3">
+			<h1>{{ user.firstname }} {{ user.lastname }}</h1>
+			<small>{{user.email}}</small><br>
+			<small>{{user.phone_number}}</small><br>
+			<small>
+				<span class=" bg-success d-inline-flex rounded opacity-75" style="width: 6px;height: 6px;--bs-border-opacity: .5;">
+				</span>
+				Active
+			</small>
+		</div>
+	</div>
+    <hr>
+	<div class=" col-12 p-4 content-section d-flex mt-2">
+
+		<ul class=" w-50 m-0 list-inline content-section mx-1 ml-auto" id="groups">
+			<h3 class=" figure-caption">Groups</h3>
+			{% for group in user.groups %}
+				<li class=" list-inline-item small">{{ group.name }}</li>
+			{% endfor %}
+		</ul>
+
+		<ul class=" w-50 m-0 list-inline content-section mx-1" id="roles">
+			<h3 class=" figure-caption">Roles</h3>
+			{% for role in user.roles %}
+				<li class=" list-inline-item small">{{ role.name }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}
