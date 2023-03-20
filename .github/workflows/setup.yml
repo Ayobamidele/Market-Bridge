@@ -4,6 +4,8 @@ on:
     branches:
       - develop
   workflow_dispatch:
+env:
+  BIGSUN: ${{ secrets.BIGSUN }}
 jobs:
   setup:
     name: Setup for Tests
@@ -30,4 +32,5 @@ jobs:
         name: automerge
         uses: "pascalgn/automerge-action@v0.15.6"
         env:
-          GITHUB_TOKEN: "${{ secrets.BIGSUN }}"
+          GITHUB_TOKEN: ${{ secrets.BIGSUN }}
+          
