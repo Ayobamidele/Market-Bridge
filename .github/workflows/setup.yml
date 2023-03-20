@@ -25,8 +25,9 @@ jobs:
   merge:
     name: Metge to main
     runs-on: ubuntu-latest
-    - uses: morbalint/git-merge-action@v1
-      with:
-        target: 'dev'
-        strategy_options: 'ours'
-          
+    steps:
+      - uses: morbalint/git-merge-action@v1
+        with:
+          target: 'dev'
+          strategy_options: 'ours'
+            
