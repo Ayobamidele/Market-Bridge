@@ -2,7 +2,7 @@ name: Setup Tests
 on:
   push:
     branches:
-      - main
+      - develop
   workflow_dispatch:
 jobs:
   setup:
@@ -22,3 +22,12 @@ jobs:
 
       - name: Run tests
         run: pytest --disable-warnings --cache-clear tests.py
+  merge:
+    name: Metge to main
+    runs-on: ubuntu-latest
+    steps:
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.15.6"
+        env:
+          BigSun: "${{ secrets.BigSun }}"
