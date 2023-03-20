@@ -30,4 +30,4 @@ jobs:
         name: automerge
         uses: "pascalgn/automerge-action@v0.15.6"
         env:
-          BigSun: "${{ secrets.BigSun }}"
+          GITHUB_TOKEN: "${{ secrets.BigSun }}"
