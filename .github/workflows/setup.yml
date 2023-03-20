@@ -28,6 +28,6 @@ jobs:
     steps:
       - uses: morbalint/git-merge-action@v1
         with:
-          target: 'dev'
+          target: 'main'
           strategy_options: 'ours'
             
