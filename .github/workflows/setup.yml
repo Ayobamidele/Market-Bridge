@@ -4,8 +4,6 @@ on:
     branches:
       - develop
   workflow_dispatch:
-env:
-  BIGSUN: ${{ secrets.BIGSUN }}
 jobs:
   setup:
     name: Setup for Tests
