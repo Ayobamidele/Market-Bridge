@@ -25,10 +25,8 @@ jobs:
   merge:
     name: Metge to main
     runs-on: ubuntu-latest
-    steps:
-      - id: automerge
-        name: automerge
-        uses: "pascalgn/automerge-action@v0.15.6"
-        env:
-          GITHUB_TOKEN: ${{ secrets.BIGSUN }}
+    - uses: morbalint/git-merge-action@v1
+      with:
+        target: 'dev'
+        strategy_options: 'ours'
           
