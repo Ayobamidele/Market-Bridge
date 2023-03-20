@@ -1,8 +1,8 @@
-"""users table
+"""user
 
-Revision ID: 5c5e1734ed52
+Revision ID: 1143ed502a22
 Revises: 
-Create Date: 2023-02-26 16:43:12.592759
+Create Date: 2023-03-20 14:30:29.656654
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5c5e1734ed52'
+revision = '1143ed502a22'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,7 +47,6 @@ def upgrade():
     sa.Column('image_file', sa.String(length=20), nullable=False),
     sa.Column('password', sa.String(length=20), nullable=False),
     sa.Column('date_created', sa.DateTime(), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -64,6 +63,15 @@ def upgrade():
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('firstname'),
     sa.UniqueConstraint('lastname')
+    )
+    op.create_table('notifications',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('timestamp', sa.Float(), nullable=True),
+    sa.Column('payload_json', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orderitem',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -110,6 +118,7 @@ def downgrade():
     op.drop_table('user_order')
     op.drop_table('user_group')
     op.drop_table('orderitem')
+    op.drop_table('notifications')
     op.drop_table('vendor')
     op.drop_table('users')
     op.drop_table('roles')

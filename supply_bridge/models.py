@@ -5,7 +5,6 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from time import time
-from flask_security import Security, SQLAlchemySessionUserDatastore
 import json
 from supply_bridge.decorators import CRUDMixin
 
@@ -209,6 +208,3 @@ class OrderItem(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=True)
 
 
-# load users, roles for a session
-user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-security = Security(app, user_datastore)
