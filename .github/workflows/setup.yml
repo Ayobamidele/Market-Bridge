@@ -23,7 +23,8 @@ jobs:
       - name: Run tests
         run: pytest --disable-warnings --cache-clear tests.py
   merge:
-    name: Metge to main
+    name: Merge to main
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
       - uses: morbalint/git-merge-action@v1
