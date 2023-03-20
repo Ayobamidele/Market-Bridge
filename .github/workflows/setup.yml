@@ -1,4 +1,4 @@
-name: Setup Tests
+name: Setup Tests & Deployment
 on:
   push:
     branches:
