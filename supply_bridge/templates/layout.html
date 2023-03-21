@@ -14,9 +14,9 @@
 
 
 	{%if title%}
-	<title>Flask Blog - {{title}}</title>
+	<title>Market Bridge - {{title}}</title>
 	{%else%}
-		<title>Flask Blog</title>
+		<title>Market Bridge</title>
 	{% endif %}
 </head>
 <body>
@@ -39,7 +39,7 @@
 						<a class="nav-item py-2 navlink" href="{{ url_for('register') }}">Register</a>
 						{% else %}
 						<a href="{{ url_for('user', email=current_user.email) }}" class="nav-item navlink">
-							<img class=" float-end img-thumbnail rounded-circle" src="{{ current_user.image_file }}" style="width: 5%;">
+							<img class=" float-end float-lg-right img-thumbnail rounded-circle" src="{{ current_user.image_file }}" style="width: 5%;">
 						</a>
 						<a class="nav-item py-2 navlink" href="{{ url_for('logout') }}">Log-out</a>
 						{% endif %}
@@ -68,16 +68,16 @@
 					<h3>Hello {{ current_user.lastname }},</h3>
 					<p class="text-muted">Let's get planning
 						<ul>
-							<a class="p-0" href="">
-								
-								<li class="list-group-item list-group-item-light">Notiifications</li>
+							<a class="p-0" href="{{ url_for('notifications') }}">
+								<li class="list-group-item list-group-item-light d-{{ notification_display }}">Notifications
+									<span class=" bg-danger rounded-pill h-50 my-auto px-2 text-white m-3">{{ user.unread_notifications().__len__()}}</span>
+								</li>
 							</a>
 							<a class="p-0" href="">
 								<li class="list-group-item list-group-item-light">Orders</li>
 							</a>
 							<a class="p-0" href="">
 								<li class="list-group-item list-group-item-light">Payment</li>
-								
 							</a>
 						</ul>
 					</p>

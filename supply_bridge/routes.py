@@ -1,7 +1,7 @@
-from flask import Flask, flash, redirect, render_template, url_for, request, send_from_directory, jsonify
+from flask import flash, redirect, render_template, url_for, request, send_from_directory, request
 from werkzeug.urls import url_parse
 from supply_bridge import app, db
-from supply_bridge.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, MessageForm
+from supply_bridge.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, MessageForm, user_edit
 from supply_bridge.models import User, Group, Role, Notification
 from supply_bridge.email import send_password_reset_email
 from flask_security import roles_accepted
@@ -12,12 +12,39 @@ from sqlalchemy_utils import PhoneNumber
 from flask_login import login_user, login_required, current_user, logout_user
 import os
 from datetime import datetime
- 
- 
+import sqlalchemy.exc as e 
 
 
 
-
+def update_or_create(model, is_existed_keys: list = [],   **kwargs):
+    session = db.session()
+    query = None
+    old = None
+    obj = None
+    new_kwargs = kwargs if len(is_existed_keys) == 0 else {}
+    created_by_key = is_existed_keys or []
+    for key in created_by_key:
+        new_kwargs[key] = kwargs[key]
+    try:
+        query = session.query(model).filter_by(**new_kwargs)
+        old = query.one()
+    except e.NoResultFound:
+        obj = model(**kwargs)
+        try:
+            session.add(obj)
+            session.flush()
+        except e.IntegrityError:
+            session.rollback()
+            return session.query(model).filter_by(**kwargs).one(), False
+        return obj, True
+    try:
+        # need update
+        query.update(kwargs)
+        session.flush()
+        session.commit()
+    except e.IntegrityError:
+        session.rollback()
+    return old, False
 
 
 def get_or_create(model, **kwargs):
@@ -34,15 +61,16 @@ def get_or_create(model, **kwargs):
         return instance, True
 
 
+
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html")
+    return render_template("home.html",user=current_user)
 
 
 @app.route("/about")
 def about():
-    return render_template("about.html", title="About")
+    return render_template("about.html", title="About", user=current_user)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -65,6 +93,10 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash("Your Account has been created! You are now able to login", 'success')
+            Notification(name='Welcome to Market Bridge',
+                         payload_json=json.dumps(
+                        f"Welcome {user.firstname}, Plan wisely withe market bridge to get the best out of all products being delivered."),
+                        reciever=user).save()
             return redirect(url_for('login'))
         else:
             flash(
@@ -98,12 +130,38 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/user/<email>')
+@app.route('/user/<email>', methods=['GET', 'POST'])
 @login_required
 def user(email):
     user = User.query.filter_by(email=email).first_or_404()
-    return render_template('user.html', user=user,)
+    print(user.is_admin())
+    return render_template('user.html', user=user, )
 
+@app.route('/user/<email>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_user(email):
+    user = User.query.filter_by(email=email).first_or_404()
+    form = user_edit(obj=user)
+    if request.method == 'POST':
+        if form.cancel.data:
+            return redirect(url_for('user', email=email))
+        elif form.save.data:
+            print(form.data, form.validate())
+            # phone_number = phonenumbers.parse(form.phone_number.data)
+            # country_prefix = geocoder.region_code_for_number(phone_number)
+            # print(phone_number)
+            # # phone_number = phonenumbers.parse(form.phone_number.data)
+            # # country_prefix = geocoder.region_code_for_number(phone_number)
+            # # phone_number=PhoneNumber(form.phone_number.data, country_prefix
+            # # new_number = PhoneNumber(form.phone_number.data, country_prefix)
+            # # form.data['phone_number'] =
+            # # print(form.phone_number.data, user.phone_country_code)
+            # updated_user = User.query.filter_by(email=email).update(values=dict(form.data), synchronize_session=False)
+            # a = update_or_create(User,is_existed_keys=['id'],id=user.id,firstname=form.lastname.data,
+            #                     lastname=form.firstname.data,
+            #                     email=form.email.data, )
+            return redirect(url_for('user', email=email))
+    return render_template('user_edit.html', user=current_user, form=form, country=user.phone_country_code)
 
 @app.route('/password_reset', methods=['GET', 'POST'])
 def reset_password_request():
@@ -149,19 +207,40 @@ def send_message(recipient):
         flash('Your message has been sent.')
         return redirect(url_for('user', email=current_user.email))
     return render_template('send_message.html', title='Send Message',
-                           form=form, recipient=recipient)
+                           form=form, recipient=recipient, user=current_user)
 
 
 @app.route('/notifications')
 @login_required
 def notifications():
     since = request.args.get('since', 0.0, type=float)
-    notifications = current_user.notifications.filter( Notification.timestamp > since).order_by(Notification.timestamp.asc())
-    return jsonify([{
+    user_notifications = current_user.notifications.filter( Notification.timestamp > since).order_by(Notification.timestamp.asc())
+    user_notifications = ([{
         'name': n.name,
         'data': n.get_data(),
-        'timestamp': datetime.fromtimestamp(n.timestamp)
-    } for n in notifications])
+        'timestamp': datetime.fromtimestamp(n.timestamp).strftime("%Y/%m/%d  %H:%M"),
+        'read': "100" if n.read == False else "50",
+        'id': n.id
+    } for n in user_notifications])
+    print(user_notifications)
+    return render_template('notifications.html', title=f'notifications-{current_user.firstname}', notifications=user_notifications,
+                           notification_display="none",user=current_user)
+
+@app.route('/notification/<id>')
+@login_required
+def get_notification(id):
+    user_notification = [{
+        'name': n.name,
+        'data': n.get_data(),
+        'timestamp': datetime.fromtimestamp(n.timestamp).strftime("%Y/%m/%d  %H:%M"),
+        'read': n.read,
+        'id': n.id,
+        'notification':n
+    } for n in current_user.notifications.filter_by(id=id).all() ][0]
+    user_notification['notification'].read = True
+    user_notification['notification'].save()
+    return render_template('notification.html', title=f"notifications-{user_notification['name']}", notification=user_notification,
+                           user=current_user)
 
 
 @app.route('/favicon.ico')

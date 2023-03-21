@@ -6,7 +6,12 @@
 			<img class=" rounded-circle w-100" src="{{ user.image_file }}" alt="" srcset="">
 		</div>
 		<div id="user-details" class="p-3">
-			<h1>{{ user.firstname }} {{ user.lastname }}</h1>
+			<div class=" d-flex">
+				<h1 class="mb-0">{{ user.lastname }} {{ user.firstname }}</h1>
+				<a class="text-info badge mt-4" href="{{ url_for('edit_user', email=user.email) }}">
+					Edit
+				</a>
+			</div>
 			<small>{{user.email}}</small><br>
 			<small>{{user.phone_number}}</small><br>
 			<small>
@@ -22,15 +27,23 @@
 		<ul class=" w-50 m-0 list-inline content-section mx-1 ml-auto" id="groups">
 			<h3 class=" figure-caption">Groups</h3>
 			{% for group in user.groups %}
-				<li class=" list-inline-item small">{{ group.name }}</li>
+				<li class=" list-inline-item small rounded border rounded-pill px-2">{{ group.name }}</li>
 			{% endfor %}
 		</ul>
 
 		<ul class=" w-50 m-0 list-inline content-section mx-1" id="roles">
 			<h3 class=" figure-caption">Roles</h3>
 			{% for role in user.roles %}
-				<li class=" list-inline-item small">{{ role.name }}</li>
+				<li class=" list-inline-item small rounded border rounded-pill px-2">{{ role.name }}</li>
 			{% endfor %}
 		</ul>
 	</div>
+	{% if user.is_admin == True %}
+		<div>
+			<a href="{{ url_for('send_message', recipient=user.email) }}">
+				<span class="list-group-item list-group-item-light">Send Message</span>
+			</a>
+		</div>
+	{% endif %}
+
 {% endblock %}

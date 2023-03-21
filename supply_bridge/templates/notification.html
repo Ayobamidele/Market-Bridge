@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block title %}Notification - {{notification.name}}{% endblock %}
+{% block content%}
+<div class=" d-block">
+	<h1>Notification - {{ notification.name }}</h1>
+	<div class="d-flex">
+		<span class="mx-1 bg-gradient-light bg-secondary badge opacity-50">Read</span>
+		<span class=" mx-1 badge text-black-50">{{ notification.timestamp }}</span>
+	</div>
+</div>
+<div class=" m-4 content-section">
+	<p class=" mb-0 text-wrap">
+		{{ notification.data }}
+		
+	</p>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+
+{% block content %}
+<h1>Change Your Details</h1>
+{{ render_form(form) }}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+
+    function setInputFilter(textbox, inputFilter, errMsg) {
+        [ "input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop", "focusout" ].forEach(function(event) {
+          textbox.addEventListener(event, function(e) {
+            if (inputFilter(this.value)) {
+              // Accepted value.
+              if ([ "keydown", "mousedown", "focusout" ].indexOf(e.type) >= 0){
+                this.classList.remove("input-error");
+                this.setCustomValidity("");
+              }
+      
+              this.oldValue = this.value;
+              this.oldSelectionStart = this.selectionStart;
+              this.oldSelectionEnd = this.selectionEnd;
+            }
+            else if (this.hasOwnProperty("oldValue")) {
+              // Rejected value: restore the previous one.
+              this.classList.add("input-error");
+              this.setCustomValidity(errMsg);
+              this.reportValidity();
+              this.value = this.oldValue;
+              this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            }
+            else {
+              // Rejected value: nothing to restore.
+              this.value = "";
+            }
+          });
+        });
+    }
+
+    var wtf_phone_field = document.getElementById('phone_number');
+    wtf_phone_field.style.position = 'absolute';
+    wtf_phone_field.style.top = '-9999px';
+    wtf_phone_field.style.left = '-9999px';
+    wtf_phone_field.style.display = 'none';
+    wtf_phone_field.parentElement.insertAdjacentHTML('beforeend', '<div><input type="tel" id="_phone"></div>');
+    var fancy_phone_field = document.getElementById('_phone');
+    var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
+        separateDialCode: true,
+		preferredCountries:["{{country}}"],
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/utils.js",
+    });
+    fancy_phone_iti.setNumber(wtf_phone_field.value);
+    fancy_phone_field.addEventListener('blur', function() {
+        wtf_phone_field.value = fancy_phone_iti.getNumber();
+    });
+
+    // Install input filters.
+setInputFilter(document.getElementById("phone_number"), function(value) {
+    return /^-?\d*$/.test(value);
+  }, "Must be an integer");
+</script>
+{% endblock %}

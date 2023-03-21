@@ -1,4 +1,26 @@
 {% extends 'layout.html' %}
-{% from 'bootstrap4/form.html' import render_form %}
 
-{% block title %}Registeration{% endblock %}
+{% block title %}Notifications{% endblock %}
+{% block content%}
+<div class=" d-flex">
+	<h1>Notifications</h1>
+	<span class=" bg-danger rounded-pill h-50 my-auto px-2 text-white m-3">{{ user.unread_notifications().__len__()}}</span>
+</div>
+<div class=" my-4">
+	{% for notification in notifications %}
+		<a href="{{ url_for('get_notification', id=notification.id) }}">
+			<div class="border rounded p-3 mb-3 opacity-{{ notification.read }}" id="{{ notification.id}}">
+				<p class=" text-muted">{{ notification.name }}</p>
+				<p class=" text-black mb-0 text-wrap">{{ notification.data }}</p>
+				<small class="text-end d-block p-2 text-lg-right text-black-50 badge">
+				{% if notification.read == "50" %}
+				<span class="mx-1 bg-gradient-light bg-secondary badge">Read</span>
+				{% else%}
+				<span class="mx-1 bg-gradient-light bg-danger badge ">Unread</span>
+				{% endif%}
+				{{ notification.timestamp }}</small>
+			</div>
+		</a>
+	{% endfor %}
+</div>
+{% endblock %}

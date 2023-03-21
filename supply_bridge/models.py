@@ -71,6 +71,9 @@ class User(db.Model, CRUDMixin,  UserMixin):
 
     def is_active(self):
         return self.active
+    
+    def is_admin(self):
+        return "Admin" in [role.name for role in self.roles]
 
     def set_authenticated(self, value):
         if value:
@@ -99,8 +102,10 @@ class User(db.Model, CRUDMixin,  UserMixin):
             return
         return User.query.get(id)
 
+    def unread_notifications(self):
+        return self.notifications.filter_by(read=False).all()
     
-class Notification(db.Model):
+class Notification(db.Model, CRUDMixin):
     __tablename__ = 'notifications'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -108,6 +113,7 @@ class Notification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp = db.Column(db.Float, default=time)
     payload_json = db.Column(db.Text)
+    read = db.Column(db.Boolean,default=False)
 
     def get_data(self):
         return json.loads(str(self.payload_json))
@@ -162,7 +168,7 @@ class Role(db.Model):
         return self.name
 
 
-class Vendor(db.Model):
+class Vendor(db.Model, CRUDMixin):
     __tablename__ = "vendor"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -181,7 +187,7 @@ class Vendor(db.Model):
     )
 
 
-class Order(db.Model):
+class Order(db.Model, CRUDMixin):
     __tablename__ = "order"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -197,7 +203,7 @@ class Order(db.Model):
         return f"Order('{self.title}','{self.date_created}')"
 
 
-class OrderItem(db.Model):
+class OrderItem(db.Model, CRUDMixin):
     __tablename__ = "orderitem"
 
     id = db.Column(db.Integer, primary_key=True)
