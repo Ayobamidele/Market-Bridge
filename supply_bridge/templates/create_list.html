@@ -1,0 +1,83 @@
+{% extends 'layout-order.html' %}
+
+
+{% block content3 %}
+<div class=" content-section d-block border border-0 p-0 px-4" style="height: 50vh;">
+	<div class="table-responsive">
+
+		<table class="table   custom-table mb-0">
+			<thead class=" border border-0">
+				<tr>
+					<th scope="col">Item</th>
+					<th scope="col">Description</th>
+					<th scope="col">Quantity</th>
+					<th scope="col">Contributors</th>
+					<th scope="col">Suppliers</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				<tr class=" bg-light clickable-row cursor-pointer" data-href="">
+					<td class="order-title">
+						Yam
+					</td>
+					<td class="order-size">
+						<p class=" text-truncate">under seige</p>
+					</td>
+					<td class="order-quantity">
+						1
+					</td>
+					<td class="order-contributors  px-lg-4">
+						<ul class="persons">
+							<li class=" ">
+								<a href="#">
+									<img src="{{ order.get_owner().image_file }}"
+										alt="{{  order.get_owner().username }}" class="img-fluid">
+								</a>
+							</li>
+
+							<a href="">
+								<span
+									class=" rounded-pill text-capitalize text-white bg-danger rounded-circle contributor_remaining_count">
+									+5
+								</span>
+							</a>
+							</a>
+						</ul>
+					</td>
+					<td class="order-contributors  px-lg-4">
+						<ul class="persons">
+							<li class=" ">
+								<a href="#">
+									<img src="{{ order.get_owner().image_file }}"
+										alt="{{  order.get_owner().username }}" class="img-fluid">
+								</a>
+							</li>
+
+							<a href="">
+								<span
+									class=" rounded-pill text-capitalize text-white bg-danger rounded-circle contributor_remaining_count">
+									+5
+								</span>
+							</a>
+							</a>
+						</ul>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="border-5 border-top fixed-bottom input-bar px-3 bg-light">
+	<div class="form-group my-3">
+		<input type="text" class="form-control input-group-text text-left" name="" id="order-input" placeholder="Click enter to add an item to the order">
+	</div>
+</div>
+<script>
+	var order = document.getElementById("order-input")
+	order.onchange = function (e) {
+		console.log(order.value)
+	}
+</script>
+
+{% endblock %}

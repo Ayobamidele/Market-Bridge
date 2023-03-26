@@ -49,7 +49,7 @@
     var fancy_phone_field = document.getElementById('_phone');
     var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
         separateDialCode: true,
-		preferredCountries:["{{country}}"],
+		preferredCountries:["ng"],
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/utils.js",
     });
     fancy_phone_iti.setNumber(wtf_phone_field.value);

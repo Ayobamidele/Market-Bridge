@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/owl.carousel.min.css')}}">
+<style>
+	.content-1 {
+		display: none;
+	}
+
+
+	.contributors>a>li {
+		margin: 0 -2%;
+	}
+	.custom-table tbody th, .custom-table tbody td{
+		padding-top: 0;
+		padding-bottom: 0;
+		padding: 0.2rem 1.5rem;
+	}
+</style>
+{% endblock %}
+{% block content2 %}
+<div class=" pt-5">
+	<a class="p-0  pb-3" href="{{ url_for('create_order', title=order.title, username=order.get_owner().username) }}">
+		<h3 class="">{{order.title}}</h3>
+	</a>
+	<div class=" d-flex w-100" style="height: 30px;">
+		<span class="badge bg-gradient-light bg-secondary text-white  my-auto opacity-50">{{order.status.value}}</span>
+		<small class="badge px-2 my-auto">{{order.date_created.date()}}</small>
+		<div class="  d-flex mx-2 ml-4 contributors">
+			<a href="{{ url_for('order_contributors', title=order.title, username=order.get_owner().username )}}"
+				class="ml-3 p-0 m-0 d-flex list-unstyled">
+				{% if order.contributors.__len__() <= limit %}
+				{% for contributor in order.contributors %}
+				<li class=" ">
+					<img src="{{ contributor.image_file }}" alt="{{ contributor.username }}"
+						class="img-fluid  h-100 border border-opacity-75 img-fluid rounded-pill">
+				</li>
+				{% endfor %}
+				{% else %}
+				{% for contributor in order.contributors[0:6] %}
+				<li class=" ">
+					<img src="{{ contributor.image_file }}" alt="{{ contributor.username }}"
+						class="img-fluid  h-100 border border-opacity-75 img-fluid rounded-pill">
+				</li>
+				{% endfor %}
+				<a href="">
+					<span class=" bg-steel m-3 my-auto opacity-25 px-2 py-1 rounded-pill text-capitalize text-white">
+						+{{ order.contributors.__len__() - limit}}
+					</span>
+				</a>
+				{% endif %}
+			</a>
+		</div>
+	</div>
+</div>
+<hr class="border border-5">
+
+{% block order_content %}{% endblock %}
+{% endblock %}
