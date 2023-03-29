@@ -20,15 +20,18 @@
 	<div class="rounded w-25">
 		<img class=" rounded-circle w-100" src="{{ user.image_file }}" alt="" srcset="">
 	</div>
-	<div id="user-details" class="p-3">
+	<div id="user-details" class="p-3 w-75">
 		<div class=" d-flex">
-			<h1 class="mb-0 text-break text-truncate">{{ user.firstname }} {{ user.lastname }}</h1>
+			<h1 class="mb-0 text-break text-truncate h3">{{ user.firstname }} {{ user.lastname }}</h1>
 			<a class="text-info badge mt-4" href="{{ url_for('edit_user', email=user.email) }}">
 				Edit
 			</a>
 		</div>
 		<small class=" text-truncate">{{user.email}}</small><br>
-		<small>{{user.phone_number}}</small><br>
+		<small>{{user.phone_number}}</small>
+		<small class="text-muted">
+			<a class="ml-2 text-info" href="{{ url_for('change_user_phone') }}">Change</a>
+		</small><br>
 		<small>
 			<span class=" bg-success d-inline-flex rounded opacity-75"
 				style="width: 6px;height: 6px;--bs-border-opacity: .5;">
@@ -77,7 +80,7 @@
 			<span class="btn text-left createOrder justify-content-center d-flex btn-dark py-2">{{ emojis.encode(':clipboard:') }} Create Order</span>
 		</div>
 	{% else %}
-		<div class=" content-section d-block"  style="height: 500px;overflow-y: scroll;">
+		<div class=" content-section d-block" >
 			<div class="table-responsive">
 
 				<table class="table  table-striped custom-table">
@@ -90,7 +93,7 @@
 							<th scope="col">Suppliers</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody  style="height: 300px;overflow-y: scroll;">
 						{% for order in orders %}
 						<tr class=" clickable-row cursor-pointer" data-href="{{ order.link }}">
 							<td>

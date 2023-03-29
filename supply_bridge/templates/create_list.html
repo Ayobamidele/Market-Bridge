@@ -75,8 +75,10 @@
 </div>
 <script>
 	var order = document.getElementById("order-input")
-	order.onchange = function (e) {
-		console.log(order.value)
+	order.onclick = function (e) {
+			console.log(order.value)
+			order.value=""
+			console.log(e)
 	}
 </script>
 

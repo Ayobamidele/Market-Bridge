@@ -10,6 +10,8 @@ class Config(object):
     SECRET_KEY = '187fcfbbef3b4af9e3dfeba2afd51e7b'
     WTF_CSRF_ENABLED = False
     CSRF_ENABLED = False
+    BOOTSTRAP_SERVE_LOCAL = True
+    BOOTSTRAP_BOOTSWATCH_THEME = 'yeti'
     # Email Configuration
     MAIL_SERVER = "smtp.zoho.com"
     MAIL_PORT = 465

@@ -73,7 +73,9 @@
 			}
 		}
 
-		.moon {}
+		.moon {
+			border: none;
+		}
 
 		input[type=text] {
 			color: #fff;
@@ -119,7 +121,7 @@
 		<p><a class="nav-item py-2 navlink" href="{{ url_for('login') }}">Login</a></p>
 		<p><a class="nav-item py-2 navlink" href="{{ url_for('register') }}">Register</a></p>
 		{% else %}
-		<p><a href="{{ url_for('user', email=current_user.email) }}" class="nav-item navlink">Profile</a></p>
+		<p><a href="{{ url_for('user') }}" class="nav-item navlink">Profile</a></p>
 		<p><a class="nav-item py-2 navlink" href="{{ url_for('logout') }}">Log-out</a></p>
 		{% endif %}
 	</div>

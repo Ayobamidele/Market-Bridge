@@ -3,19 +3,19 @@ from flask import (
     redirect,
     render_template,
     url_for,
-    request,
     send_from_directory,
     request,
 )
 from werkzeug.urls import url_parse
-from supply_bridge import app, db
+from supply_bridge import app, db,bootstrap
 from supply_bridge.forms import (
     LoginForm,
     RegistrationForm,
     ResetPasswordRequestForm,
     ResetPasswordForm,
     MessageForm,
-    user_edit,
+    UserEdit,
+    PhoneChangeForm
 )
 from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
 from supply_bridge.email import send_password_reset_email
@@ -32,37 +32,6 @@ from datetime import datetime
 import sqlalchemy.exc as e
 import emojis
 import random
-
-
-def update_or_create(model, is_existed_keys: list = [], **kwargs):
-    session = db.session()
-    query = None
-    old = None
-    obj = None
-    new_kwargs = kwargs if len(is_existed_keys) == 0 else {}
-    created_by_key = is_existed_keys or []
-    for key in created_by_key:
-        new_kwargs[key] = kwargs[key]
-    try:
-        query = session.query(model).filter_by(**new_kwargs)
-        old = query.one()
-    except e.NoResultFound:
-        obj = model(**kwargs)
-        try:
-            session.add(obj)
-            session.flush()
-        except e.IntegrityError:
-            session.rollback()
-            return session.query(model).filter_by(**kwargs).one(), False
-        return obj, True
-    try:
-        # need update
-        query.update(kwargs)
-        session.flush()
-        session.commit()
-    except e.IntegrityError:
-        session.rollback()
-    return old, False
 
 
 def get_or_create(model, **kwargs):
@@ -128,7 +97,7 @@ def register():
                 "warning",
             )
             return redirect(url_for("register"))
-    return render_template("register.html", title="Register", form=form)
+    return render_template("register.html", title="Register", emojis=emojis, user=current_user, form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -159,26 +128,26 @@ def logout():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def user():
-    if request.method == "POST":
-        if request.json.get("create") == True:
-            new_order = Order(
-                title=f"Order-{random.randint(2383385933,2345678918376829)}",
-                contributors=[current_user],
-                content=f"{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}",
-                owner=current_user.id,
-            )
-            new_order.save()
-            return (
-                redirect(
-                    url_for(
-                        "create_order",
-                        username=current_user.username,
-                        title=new_order.title,
-                    ),
-                    code=307,
+    print(bootstrap.load_js)
+    if request.method == "POST" and request.json.get("create"):
+        new_order = Order(
+            title=f"Order-{random.randint(2383385933, 2345678918376829)}",
+            contributors=[current_user],
+            content=f"{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}",
+            owner=current_user.id,
+        )
+        new_order.save()
+        return (
+            redirect(
+                url_for(
+                    "create_order",
+                    username=current_user.username,
+                    title=new_order.title,
                 ),
-                307,
-            )
+                code=307,
+            ),
+            307,
+        )
     # user_orders = current_user.orders
     limit = 6
     user_order = [
@@ -198,38 +167,24 @@ def user():
     # user_orders = OrderTable(user_order)
     # print(user_orders.tr(user_orders))
     return render_template(
-        "user.html", user=current_user, emojis=emojis, orders=user_order,limit=limit
+        "user.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
     )
 
 
 @app.route("/profile/settings", methods=["GET", "POST"])
 @login_required
 def edit_user():
-    form = user_edit(obj=current_user)
+    form = UserEdit(obj=current_user)
     if request.method == "POST":
         if form.cancel.data:
             return redirect(url_for("user"))
         elif form.save.data:
-            print(form.data, form.validate())
-            # phone_number = phonenumbers.parse(form.phone_number.data)
-            # country_prefix = geocoder.region_code_for_number(phone_number)
-            # print(phone_number)
-            # # phone_number = phonenumbers.parse(form.phone_number.data)
-            # # country_prefix = geocoder.region_code_for_number(phone_number)
-            # # phone_number=PhoneNumber(form.phone_number.data, country_prefix
-            # # new_number = PhoneNumber(form.phone_number.data, country_prefix)
-            # # form.data['phone_number'] =
-            # # print(form.phone_number.data, user.phone_country_code)
-            # updated_user = User.query.filter_by(email=email).update(values=dict(form.data), synchronize_session=False)
-            a = update_or_create(
-                User,
-                is_existed_keys=["id"],
-                id=user.id,
+            current_user.update(
                 lastname=form.lastname.data,
                 firstname=form.firstname.data,
+                username=form.username.data,
                 email=form.email.data,
             )
-            db.session().commit()
             return redirect(url_for("user"))
     return render_template(
         "user_edit.html",
@@ -239,15 +194,49 @@ def edit_user():
     )
 
 
+@app.route("/profile/settings/phone", methods=["GET", "POST"])
+@login_required
+def change_user_phone():
+    form = PhoneChangeForm()
+    return render_template(
+        "change_phone.html",
+        user=current_user,
+        form=form,
+        emojis=emojis,
+    )
+
+# print(form.data, form.validate())
+# phone_number = phonenumbers.parse(form.phone_number.data)
+# country_prefix = geocoder.region_code_for_number(phone_number)
+# print(phone_number)
+# # phone_number = phonenumbers.parse(form.phone_number.data)
+# # country_prefix = geocoder.region_code_for_number(phone_number)
+# # phone_number=PhoneNumber(form.phone_number.data, country_prefix
+# # new_number = PhoneNumber(form.phone_number.data, country_prefix)
+# # form.data['phone_number'] =
+# # print(form.phone_number.data, user.phone_country_code)
+# updated_user = User.query.filter_by(email=email).update(values=dict(form.data), synchronize_session=False)
+# a = update_or_create(
+#     User,
+#     is_existed_keys=["id"],
+#     id=user.id,
+#     lastname=form.lastname.data,
+#     firstname=form.firstname.data,
+#     username=form.username.data,
+#     email=form.email.data,
+# )
+# db.session().commit()
+
+
 @app.route("/password_reset", methods=["GET", "POST"])
 def reset_password_request():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_password_reset_email(user)
+        validated_user = User.query.filter_by(email=form.email.data).first()
+        if validated_user:
+            send_password_reset_email(validated_user)
         flash("Check your email for the instructions to reset your password")
         return redirect(url_for("login"))
     return render_template(
@@ -257,31 +246,31 @@ def reset_password_request():
 
 @app.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for("index"))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user.set_password(form.password.data)
-        db.session.commit()
-        flash("Your password has been reset.")
-        return redirect(url_for("login"))
-    return render_template("reset_password.html", form=form)
+    if not current_user.is_authenticated:
+        authenticated_user = User.verify_reset_password_token(token)
+        if not authenticated_user:
+            return redirect(url_for('index'))
+        form = ResetPasswordForm()
+        if form.validate_on_submit():
+            authenticated_user.set_password(form.password.data)
+            db.session.commit()
+            flash("Your password has been reset.")
+            return redirect(url_for("login"))
+        return render_template("reset_password.html", form=form)
+    return redirect(url_for("index"))
 
 
 @app.route("/send_message/<recipient>", methods=["GET", "POST"])
 @roles_accepted("Admin")
 @login_required
 def send_message(recipient):
-    user = User.query.filter_by(email=recipient).first_or_404()
+    recipient = User.query.filter_by(email=recipient).first_or_404()
     form = MessageForm()
-    if form.validate_on_submit() and user:
+    if form.validate_on_submit() and recipient:
         n = Notification(
             name="Urgent Message!!",
             payload_json=json.dumps(form.message.data),
-            reciever=user,
+            reciever=recipient,
         )
         db.session.add(n)
         db.session.commit()
@@ -310,7 +299,7 @@ def notifications():
             "timestamp": datetime.fromtimestamp(n.timestamp).strftime(
                 "%Y/%m/%d  %H:%M"
             ),
-            "read": "100" if n.read == False else "50",
+            "read": "100" if n.read is False else "50",
             "id": n.id,
         }
         for n in user_notifications
@@ -357,8 +346,8 @@ def get_notification(id):
 @authorise_order_access
 def create_order(username, title):
     limit = 6
-    user = User.query.filter_by(username=username).first()
-    order = Order.query.filter_by(title=title, owner=user.id).first()
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
     return render_template(
         "create_list.html",
@@ -366,19 +355,21 @@ def create_order(username, title):
         user=current_user,
         edit=edit,
         order=order,
-        limit = limit,
+        limit=limit,
     )
+
 
 @app.route("/orders/<username>/<title>/contributors", methods=["GET", "POST"])
 @login_required
 @authorise_order_access
 def order_contributors(username, title):
     limit = 6
-    user = User.query.filter_by(username=username).first()
-    order = Order.query.filter_by(title=title, owner=user.id).first()
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
-    return render_template("order_contributors.html",emojis=emojis,
-        user=current_user,order=order, edit=edit, limit=limit)
+    return render_template("order_contributors.html", emojis=emojis,
+                           user=current_user, order=order, edit=edit, limit=limit)
+
 
 @app.route("/favicon.ico")
 def favicon():
@@ -390,10 +381,10 @@ def favicon():
 
 
 @app.errorhandler(403)
-def foridden(e):
+def forbidden(error):
     return render_template("403_page.html"), 403
 
 
 @app.errorhandler(404)
-def not_found(e):
+def not_found(error):
     return render_template("404_page.html"), 404
