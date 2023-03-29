@@ -41,6 +41,7 @@ class UserModelCase(TestCase):
     def test_users_registration(self):
         user = User(firstname='Joe', lastname="Regan", email='joe@joes.com',phone_number=PhoneNumber('08093456822', 'NG'))
         user.set_password("test1234589")
+        user.set_username()
         db.session.add(user)
         self.setUp()
         users = User.query.all()
