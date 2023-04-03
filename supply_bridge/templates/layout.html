@@ -4,12 +4,11 @@
 	<!--Required meta tags-->
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{ bootstrap.load_css() }}
-	{% block styles %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
-    {% endblock %}
 	<!--Bootstrap css-->
+    {{ bootstrap.load_css() }}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+	{% block styles %}
+    {% endblock %}
 	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 
@@ -21,7 +20,7 @@
 </head>
 <body>
 	<header class="site-header">
-		<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+		<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top bg-dark opacity-75">
 			<div class="container">
 				<a class="navbar-brand mr-4" href="/">Market Bridge</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" data-target="navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,8 +34,8 @@
 					<!--Navbar right side-->
 					<div class="navbar-nav">
 						{% if current_user.is_anonymous %}
-						<a class="nav-item py-2 navlink" href="{{ url_for('login') }}">Login</a>
-						<a class="nav-item py-2 navlink" href="{{ url_for('register') }}">Register</a>
+						<a class="nav-item py-2 navlink login" href="{{ url_for('login') }}">Login</a>
+						<a class="nav-item py-2 navlink register" href="{{ url_for('register') }}">Register</a>
 						{% else %}
 						<a href="{{ url_for('user') }}" class="nav-item navlink">
 							<img class=" float-end float-lg-right img-thumbnail rounded-circle image-cropper" src="{{ current_user.image_file }}">
@@ -48,6 +47,8 @@
 			</div>
 		</nav>
 	</header>
+	{% block content3 %}{% endblock %}
+
 	<main role="main" class="container">
 		<div class="content-1 row">
 			<div class="col-md-8">
@@ -88,7 +89,6 @@
 		</div>
 		{% block content2 %}{% endblock %}
 	</main>
-	{% block content3 %}{% endblock %}
 
 	<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
 	

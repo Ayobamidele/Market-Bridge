@@ -62,6 +62,14 @@ def about():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """
+    It takes the phone number from the form, parses it, gets the country code, creates a user, sets the
+    password, sets the username, checks if the user exists, if not, it creates a group, role, appends
+    the group and role to the user, saves the user, sends a notification to the user, and redirects to
+    the login page
+    :return: a tuple of the form (object, created), where object is the retrieved or created object and
+    created is a boolean specifying whether a new object was created.
+    """
     form = RegistrationForm()
     if form.validate_on_submit():
         phone_number = phonenumbers.parse(form.phone.data)

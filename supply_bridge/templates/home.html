@@ -1,15 +1,31 @@
 {% extends "layout.html" %}
-{% block content %}
-	{%for post in posts%}
-	<article class="media content-section">
-		<div class="media-body">
-			<div class="article-metadata">
-				<a class="mr-2" href="#">{{ post.author }}</a>
-				<small class="text-muted">{{ post.date_posted }}</small>
-			</div>
-			<h2><a class="article-title" href="#">{{ post.title }}</a></h2>
-			<p class="article-content">{{  post.contents }}</p>
-		</div>
-	</article>
-	{% endfor %}
-{% endblock content %}
+{% block styles %}
+	<style>
+
+		.text-primary, small> a {
+			--bs-text-opacity: 1;
+			color: var(--purple) !important;
+		}
+		.btn-outline-purple{
+			border-color: var(--purple) !important;
+			color: var(--purple) !important;
+		}
+		.container-j {
+			height: 100vh;
+			width: 100%;
+			background-image: url("{{ url_for('static', filename='images/b1.jpg') }}") ;
+			background-position: center;
+			background-size: cover;
+			padding-left: 5%;
+			padding-right: 5%;
+			box-sizing: border-box;
+			position: relative;
+		}
+	</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/intlTelInput.css') }}">
+{% endblock %}
+{% block content3 %}
+	<div class="container-j">
+
+	</div>
+{% endblock %}

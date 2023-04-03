@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     confirm_password = PasswordField("Confirm Password",
                                      validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField("Sign-up")
+    submit = SubmitField("Sign-up", render_kw={"class":"btn btn-outline-purple btn-dark"})
 
     @staticmethod
     def validate_phone(phone):

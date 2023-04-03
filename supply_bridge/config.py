@@ -11,7 +11,7 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     CSRF_ENABLED = False
     BOOTSTRAP_SERVE_LOCAL = True
-    BOOTSTRAP_BOOTSWATCH_THEME = 'yeti'
+    # BOOTSTRAP_BOOTSWATCH_THEME = 'yeti'
     # Email Configuration
     MAIL_SERVER = "smtp.zoho.com"
     MAIL_PORT = 465

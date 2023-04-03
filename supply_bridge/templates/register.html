@@ -1,11 +1,39 @@
 {% extends 'layout.html' %}
 {% from 'bootstrap4/form.html' import render_form %}
-
+{% block styles %}
+	<style>
+		body{
+			background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("{{ url_for('static', filename='svg/patternpad-mb-h1.svg') }}");
+			background-size: cover;
+			background-position: center;
+			display: block;
+		}
+		
+		nav{
+			background: transparent !important;
+			background-color: transparent;
+		}
+		.text-primary, small> a {
+			--bs-text-opacity: 1;
+			color: var(--purple) !important;
+		}
+		.btn-outline-purple{
+			border-color: var(--purple) !important;
+			color: var(--purple) !important;
+		}
+        .register{
+            display: none;
+        }
+	</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/intlTelInput.css') }}">
+{% endblock %}
 {% block title %}Registeration{% endblock %}
 
-{% block content %}
-<h1>Join today!</h1>
-{{ render_form(form) }}
+{% block content3 %}
+<div class=" container">
+
+    {{ render_form(form, extra_classes="content-section bg-opacity-25 bg-body text-white col-md-6 mx-auto") }}
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -21,7 +49,7 @@
     var fancy_phone_iti = window.intlTelInput(fancy_phone_field, {
         separateDialCode: true,
 		preferredCountries:["ng"],
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/utils.js",
+        utilsScript: "{{ url_for('static', filename='js/utils.js') }}",
     });
     fancy_phone_iti.setNumber(wtf_phone_field.value);
     fancy_phone_field.addEventListener('blur', function() {
