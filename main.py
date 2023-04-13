@@ -7,4 +7,4 @@ def make_shell_context():
     return {x[0]:x[1] for x in db.metadata.tables.items()}
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=int("5000"),debug=True)
+    app.run(debug=True)
