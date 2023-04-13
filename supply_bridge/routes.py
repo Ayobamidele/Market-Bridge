@@ -7,7 +7,7 @@ from flask import (
     request,
 )
 from werkzeug.urls import url_parse
-from supply_bridge import app, db,bootstrap
+from supply_bridge import app, db, bootstrap
 from supply_bridge.forms import (
     LoginForm,
     RegistrationForm,
@@ -230,6 +230,7 @@ def change_user_phone():
         form=form,
         emojis=emojis,
     )
+
 
 # print(form.data, form.validate())
 # phone_number = phonenumbers.parse(form.phone_number.data)

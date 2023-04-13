@@ -5,6 +5,8 @@ import phonenumbers
 from .models import User
 from flask_login import current_user
 from phonenumbers import geocoder
+
+
 # from flask_login import login_required, current_user
 
 class RegistrationForm(FlaskForm):
@@ -19,13 +21,13 @@ class RegistrationForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     confirm_password = PasswordField("Confirm Password",
                                      validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField("Sign-up", render_kw={"class":"btn btn-outline-purple btn-dark"})
+    submit = SubmitField("Sign-up", render_kw={"class": "btn btn-outline-purple btn-dark"})
 
     def validate_phone(self, phone):
         try:
             phone_number = phonenumbers.parse(phone.data, None)
             country_prefix = geocoder.region_code_for_number(phone_number)
-            p = phonenumbers.parse(str(phone_number.national_number) ,str(country_prefix))
+            p = phonenumbers.parse(str(phone_number.national_number), str(country_prefix))
             if not phonenumbers.is_valid_number(p):
                 raise ValueError()
         except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
@@ -47,7 +49,7 @@ class UserEdit(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = EmailField('Email',
                        validators=[DataRequired(), Email()])
-    
+
     save = SubmitField("Save")
 
     cancel = SubmitField(label='Cancel',
@@ -56,25 +58,24 @@ class UserEdit(FlaskForm):
     @staticmethod
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
-        #check if user is owner of email
-        #Check if other user has the email
+        # check if user is owner of email
+        # Check if other user has the email
         if current_user.email != email.data:
             if user is not None:
                 raise ValidationError('Please use a different email address.')
 
-	
 
 class PhoneChangeForm(FlaskForm):
     phone = StringField('Phone', validators=[])
     submit = SubmitField('Submit')
     cancel = SubmitField(label='Cancel',
                          render_kw={'form-novalidate': True, 'class': ' btn-warning'})
-    
+
     def validate_phone(self, phone):
         try:
             phone_number = phonenumbers.parse(phone.data, None)
             country_prefix = geocoder.region_code_for_number(phone_number)
-            p = phonenumbers.parse(str(phone_number.national_number) ,str(country_prefix))
+            p = phonenumbers.parse(str(phone_number.national_number), str(country_prefix))
             if not phonenumbers.is_valid_number(p):
                 raise ValidationError("Invalid phone number")
         except:
