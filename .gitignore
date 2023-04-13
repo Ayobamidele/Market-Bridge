@@ -132,3 +132,4 @@ dmypy.json
 migrations/
 .idea/
 __pycache__/
+Dockerfile
