@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 .flaskenv
+migrations/
+.idea/
+__pycache__/
