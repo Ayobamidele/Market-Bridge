@@ -187,13 +187,17 @@ def edit_user():
         if form.cancel.data:
             return redirect(url_for("user"))
         elif form.save.data:
-            current_user.update(
-                lastname=form.lastname.data,
-                firstname=form.firstname.data,
-                username=form.username.data,
-                email=form.email.data,
-            )
-            return redirect(url_for("user"))
+            if form.validate_on_submit():
+                current_user.update(
+                    lastname=form.lastname.data,
+                    firstname=form.firstname.data,
+                    username=form.username.data,
+                    email=form.email.data,
+                )
+                flash("Successfully updated your profile !!!", 'success')
+                return redirect(url_for("user"))
+            else:
+                flash("Incomplete or wrong format", 'warning')
     return render_template(
         "user_edit.html",
         user=current_user,
@@ -205,7 +209,21 @@ def edit_user():
 @app.route("/profile/settings/phone", methods=["GET", "POST"])
 @login_required
 def change_user_phone():
-    form = PhoneChangeForm()
+    form = PhoneChangeForm(obj=current_user)
+    if request.method == "POST":
+        print(form)
+        if form.cancel.data:
+            return redirect(url_for("user"))
+        elif form.validate_on_submit():
+            phone_number = phonenumbers.parse(form.phone.data, "NG")
+            country_prefix = geocoder.region_code_for_number(phone_number)
+            current_user.update(
+                phone_number=PhoneNumber(f"0{phone_number.national_number}", country_prefix)
+            )
+            flash("Successfully changed your phone number !!!", 'success')
+            return redirect(url_for("user"))
+        else:
+            flash("Incomplete or wrong format", 'warning')
     return render_template(
         "change_phone.html",
         user=current_user,
