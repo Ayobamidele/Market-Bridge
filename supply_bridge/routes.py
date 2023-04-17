@@ -50,13 +50,13 @@ def get_or_create(model, **kwargs):
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html", user=current_user, emojis=emojis)
+    return render_template("home/home.html", user=current_user, emojis=emojis)
 
 
 @app.route("/about")
 def about():
     return render_template(
-        "about.html", title="About", user=current_user, emojis=emojis
+        "home/about.html", title="About", user=current_user, emojis=emojis
     )
 
 
@@ -71,6 +71,7 @@ def register():
     created is a boolean specifying whether a new object was created.
     """
     form = RegistrationForm()
+    print(dir(form._fields['email']),form._fields['email'].short_name)
     if form.validate_on_submit():
         phone_number = phonenumbers.parse(form.phone.data)
         country_prefix = geocoder.region_code_for_number(phone_number)
@@ -105,7 +106,7 @@ def register():
                 "warning",
             )
             return redirect(url_for("register"))
-    return render_template("register.html", title="Register", emojis=emojis, user=current_user, form=form)
+    return render_template("auth/registration/register.html", title="Register", emojis=emojis, user=current_user, form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -114,6 +115,7 @@ def login():
         return redirect(url_for("home"))
     form = LoginForm()
     if form.validate_on_submit():
+        print("Hello")
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember.data)
@@ -124,7 +126,7 @@ def login():
         else:
             flash("Login unsuccessful. Please check Username and Password", "danger")
             return redirect(url_for("login"))
-    return render_template("login.html", title="login", form=form)
+    return render_template("auth/login/login.html", title="login", form=form)
 
 
 @app.route("/logout")
@@ -175,7 +177,7 @@ def user():
     # user_orders = OrderTable(user_order)
     # print(user_orders.tr(user_orders))
     return render_template(
-        "user.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
+        "profile/user.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
     )
 
 
@@ -199,7 +201,7 @@ def edit_user():
             else:
                 flash("Incomplete or wrong format", 'warning')
     return render_template(
-        "user_edit.html",
+        "profile/user_edit.html",
         user=current_user,
         form=form,
         emojis=emojis,
@@ -225,7 +227,7 @@ def change_user_phone():
         else:
             flash("Incomplete or wrong format", 'warning')
     return render_template(
-        "change_phone.html",
+        "profile/change_phone.html",
         user=current_user,
         form=form,
         emojis=emojis,
@@ -409,9 +411,9 @@ def favicon():
 
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template("403_page.html"), 403
+    return render_template("error/403_page.html"), 403
 
 
 @app.errorhandler(404)
 def not_found(error):
-    return render_template("404_page.html"), 404
+    return render_template("error/404_page.html"), 404

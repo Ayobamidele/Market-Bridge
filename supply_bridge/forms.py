@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     phone = StringField('Phone',
                         validators=[DataRequired()])
-    email = EmailField('Email address',
+    email = EmailField('Email',
                        validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     confirm_password = PasswordField("Confirm Password",
@@ -87,7 +87,7 @@ class LoginForm(FlaskForm):
                         validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     remember = BooleanField('Remember Me')
-    submit = SubmitField("Login")
+    submit = SubmitField("Sign In")
 
 
 class ResetPasswordRequestForm(FlaskForm):

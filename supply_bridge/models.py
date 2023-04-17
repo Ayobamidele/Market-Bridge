@@ -207,7 +207,7 @@ def load_user(user):
 #     return None
 
 
-class Group(db.Model):
+class Group(db.Model, CRUDMixin):
     __tablename__ = "groups"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
@@ -216,7 +216,7 @@ class Group(db.Model):
         return self.name
 
 
-class Role(db.Model):
+class Role(db.Model, CRUDMixin):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
@@ -300,6 +300,14 @@ class Order(db.Model, CRUDMixin):
 
     def get_owner(self):
         return User.query.get(self.owner) or None
+    
+    def add_order(self, title):
+        object = OrderItem(title=title, quantity=1)
+        object.save()
+        self.order_items.append(object)
+        self.save()
+        return object
+    
 
 
 class OrderItem(db.Model, CRUDMixin):
