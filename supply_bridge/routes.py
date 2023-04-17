@@ -19,7 +19,6 @@ from supply_bridge.forms import (
 )
 from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
 from supply_bridge.email import send_password_reset_email
-from supply_bridge.tables import OrderTable
 from supply_bridge.decorators import authorise_order_access
 from flask_security import roles_accepted
 import json
