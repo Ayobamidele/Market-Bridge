@@ -1,99 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<!--Required meta tags-->
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--Bootstrap css-->
-    {{ bootstrap.load_css() }}
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-	{% block styles %}
-    {% endblock %}
-	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Market Bridge</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
 
-
-	{%if title%}
-	<title>Market Bridge - {{title}}</title>
-	{%else%}
-		<title>Market Bridge</title>
-	{% endif %}
-</head>
-<body>
-	<header class="site-header">
-		<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top bg-dark opacity-75">
-			<div class="container">
-				<a class="navbar-brand mr-4" href="/">Market Bridge</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" data-target="navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarToggle">
-					<div class="navbar-nav mr-auto">
-						<a class="nav-item py-2 navlink" href="{{ url_for('home') }}">Home</a>
-						<a class="nav-item py-2 navlink" href="{{ url_for('about') }}">About</a>
-					</div>
-					<!--Navbar right side-->
-					<div class="navbar-nav">
-						{% if current_user.is_anonymous %}
-						<a class="nav-item py-2 navlink login" href="{{ url_for('login') }}">Login</a>
-						<a class="nav-item py-2 navlink register" href="{{ url_for('register') }}">Register</a>
-						{% else %}
-						<a href="{{ url_for('user') }}" class="nav-item navlink">
-							<img class=" float-end float-lg-right img-thumbnail rounded-circle image-cropper" src="{{ current_user.image_file }}">
-						</a>
-						<a class="nav-item my-auto small px-3 navlink" href="{{ url_for('logout') }}">Log-out</a>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		</nav>
-	</header>
-	{% block content3 %}{% endblock %}
-
-	<main role="main" class="container">
-		<div class="content-1 row">
-			<div class="col-md-8">
-				{% with messages = get_flashed_messages(with_categories=True) %}
-					{% if messages %}
-						{% for category, message in messages %}
-							<div class="alert alert-{{ category }}">
-								{{ message }}
-							</div>
-						{% endfor %}
-					{% endif %}
-				{% endwith %}
-				{% block content %}{% endblock %}
-			</div>
-			{% if not current_user.is_anonymous %}
-			<div class="col-md-4 side-bar">
-				<div class="content-section my-5">
-					<h3 class=" text-break">{{ emojis.encode(':wave:') }} Hello {{ current_user.lastname }},</h3>
-					<p class="text-muted">Let's get planning
-						<ul>
-							<a class="p-0" href="{{ url_for('notifications') }}">
-								<li class="list-group-item list-group-item-light d-flex">
-									<p class="mb-0">Notifications</p>
-									<span class=" bg-danger rounded-pill h-50 my-auto px-2 text-white m-3">{{ user.unread_notifications().__len__()}}</span>
-								</li>
-							</a>
-							<a class="p-0" href="">
-								<li class="list-group-item list-group-item-light">Orders</li>
-							</a>
-							<a class="p-0" href="">
-								<li class="list-group-item list-group-item-light">Payment</li>
-							</a>
-						</ul>
-					</p>
-				</div>
-			</div>
-			{% endif %}
-		</div>
-		{% block content2 %}{% endblock %}
-	</main>
-
-	<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tailwind.min.css') }}" />
+	<!--Replace with your tailwind.css once created-->
+	<link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+	<script src="{{ url_for('static', filename='js/tailwind.js') }}"></script>
 	
-    {{ bootstrap.load_js() }}
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+		
+		html {
+			font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI",
+			Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+			"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+			"Noto Color Emoji";
+		}
+		body{
+			background-image: url("{{ url_for('static', filename='images/header.png') }}");
+		}
+	</style>
+	{% block styles %}
+		
+	{% endblock %}
+</head>
+
+<body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed">
+	<div class="h-full">
+		<!--Nav-->
+		<div class="w-full container mx-auto">
+			<div class="w-full flex items-center justify-between">
+				<a href="{{ url_for('home') }}"
+					class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
+					href="#">
+					Market<span
+						class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-white-500 to-purple-500">Bridge</span>
+				</a>
+
+				<div class="flex w-1/2 justify-end content-center">
+					{% if user.is_anonymous %}
+					<a class="inline-block text-blue-300 no-underline hover:text-purple-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform duration-300 ease-in-out"
+						href="{{ url_for('login') }}">
+						<button
+							class="font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+							type="button">
+							Sign In
+						</button>
+					</a>
+
+					<a class="inline-block text-blue-300 no-underline hover:text-purple-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform duration-300 ease-in-out"
+						href="{{ url_for('register') }}">
+						<button
+							class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-purple-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+							type="button">
+							Sign Up
+						</button>
+					</a>
+					{% else %}
+					<div class="hs-dropdown relative inline-flex">
+						<button id="hs-dropdown-custom-trigger" type="button" class="hs-dropdown-toggle py-1 pl-1 pr-3 inline-flex justify-center items-center gap-2 rounded-full border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-purple-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+						  <img class="w-8 h-auto rounded-full" src="{{ user.image_file }}" alt="{{ user.username }}">
+						  <span class="text-gray-600 font-medium truncate max-w-[7.5rem] dark:text-gray-400">{{ user.username }}</span>
+						  <svg class="hs-dropdown-open:rotate-180 w-2.5 h-2.5 text-gray-600" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M2 5L8.16086 10.6869C8.35239 10.8637 8.64761 10.8637 8.83914 10.6869L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						  </svg>
+						</button>
+					  
+						<div class="hs-dropdown-menu transition-[opacity,margin] z-10 hs-dropdown-open:opacity-100 hidden mt-2 min-w-[15rem] bg-white shadow-md rounded-lg p-2 mt-2 dark:bg-gray-800 dark:border dark:border-gray-700" aria-labelledby="hs-dropdown-custom-trigger">
+						  <a href="{{ url_for('user') }}" class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-purple-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+							Profile
+						  </a>
+						  <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-purple-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+							Orders
+						  </a>
+						  <a href="{{ url_for('notifications') }}" class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-purple-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+							Notification
+						  </a>
+						  <a href="{{ url_for('logout') }}" class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-800 hover:bg-red-100 focus:ring-2 focus:ring-purple-500 dark:text-red-400 dark:hover:bg-gray-700 dark:hover:text-red-300" href="#">
+							Log out
+						  </a>
+						 
+						</div>
+					  </div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		
+		{% block content %}
+			
+		{% endblock %}
+	</div>
 	{% block scripts %}
-    {% endblock %}
+		
+	{% endblock %}
+	<script src="https://cdn.jsdelivr.net/npm/@preline/preline@1.0.0/dist/hs-ui.bundle.min.js"></script>
 </body>
 </html>

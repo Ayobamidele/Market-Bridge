@@ -26,3 +26,14 @@ def authorise_order_access(f):
         return f(*args, **kwargs)
 
     return wrap
+
+
+def unauthenticated_only(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if current_user.is_authenticated:
+            return redirect(url_for("user"))
+
+        return f(*args, **kwargs)
+
+    return wrap

@@ -17,6 +17,9 @@ class OrderStatus(enum.Enum):
     delivered_unpaid = "waiting payment"
     delivered_paid = "delivered"
 
+class NotificationType(enum.Enum):
+    invitation = "Invitation"
+    greeting = "Greeting"
 
 # mapping tables
 UserGroup = db.Table(
@@ -171,6 +174,11 @@ class Notification(db.Model, CRUDMixin):
     timestamp = db.Column(db.Float, default=time)
     payload_json = db.Column(db.Text)
     read = db.Column(db.Boolean, default=False)
+    messsage_type = db.Column(
+        db.Enum(NotificationType),
+        default=NotificationType.greeting,
+        # nullable=False
+    )
 
     def get_data(self):
         return json.loads(str(self.payload_json))

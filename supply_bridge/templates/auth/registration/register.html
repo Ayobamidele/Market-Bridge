@@ -1,70 +1,12 @@
-<!DOCTYPE html>
-<html>
+{% extends 'home/layout.html' %}
+{% block styles %}
 	
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#000000" />
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tailwind.min.css') }}">
-		<!--Replace with your tailwind.css once created-->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
-		<link href="{{ url_for('static', filename='css/custom-forms.min.css') }}" rel="stylesheet" />
+<!--Replace with your tailwind.css once created-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
+{% endblock %}
 
-	<style>
-		@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+{% block content %}
 
-		html {
-			font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-		}
-	</style>
-	<title>Login | Market Bridge</title>
-</head>
-
-<body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed"
-style="background-image: url('{{ url_for('static', filename='images/header.png') }}')">
-	<div class="w-full container mx-auto">
-		<div class="w-full flex items-center justify-between">
-			<a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-				href="#">
-				Market<span
-					class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-white-500 to-purple-500">Bridge</span>
-			</a>
-
-			<div class="flex w-1/2 justify-end content-center">
-				<a class="inline-block text-blue-300 no-underline hover:text-purple-500 hover:text-underline text-center h-10 p-2  md:h-auto md:p-4 transform duration-300 ease-in-out"
-					href="{{ url_for('login') }}">
-					<button
-						class="font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-						type="button">
-						Sign In
-					</button>
-				</a>
-
-				<a class="inline-block text-blue-300 no-underline hover:text-purple-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform duration-300 ease-in-out"
-					href="{{ url_for('register') }}">
-
-					<button
-						class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-purple-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-						type="button">
-						Sign Up
-					</button>
-				</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-8">
-		{% with messages = get_flashed_messages(with_categories=True) %}
-			{% if messages %}
-				{% for category, message in messages %}
-					<div class="alert alert-{{ category }}">
-						{{ message }}
-					</div>
-				{% endfor %}
-			{% endif %}
-		{% endwith %}
-		{% block content %}{% endblock %}
-	</div>
 
 	<div class="container pt-9 md:pt-19 mx-auto flex flex-wrap flex-col md:flex-row items-center">
 		<div class="container mx-auto px-4 h-full">
@@ -196,16 +138,9 @@ style="background-image: url('{{ url_for('static', filename='images/header.png')
 		</div>
 
 	</div>
-
-</body>
+	
+{% endblock %}
 {% block scripts %}
-{{ bootstrap.load_js() }}
-<script>
-	function toggleNavbar(collapseID) {
-		document.getElementById(collapseID).classList.toggle("hidden");
-		document.getElementById(collapseID).classList.toggle("block");
-	}
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/intlTelInput.min.js"></script>
 <script>
 	var wtf_phone_field = document.getElementById('phone');
@@ -226,7 +161,6 @@ style="background-image: url('{{ url_for('static', filename='images/header.png')
 	});
 </script>
 {% endblock %}
-</html>
 
 
 

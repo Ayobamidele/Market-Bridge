@@ -19,7 +19,7 @@ from supply_bridge.forms import (
 )
 from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
 from supply_bridge.email import send_password_reset_email
-from supply_bridge.decorators import authorise_order_access
+from supply_bridge.decorators import authorise_order_access, unauthenticated_only
 from flask_security import roles_accepted
 import json
 import phonenumbers
@@ -60,6 +60,7 @@ def about():
 
 
 @app.route("/register", methods=["GET", "POST"])
+@unauthenticated_only
 def register():
     """
     It takes the phone number from the form, parses it, gets the country code, creates a user, sets the
@@ -70,7 +71,6 @@ def register():
     created is a boolean specifying whether a new object was created.
     """
     form = RegistrationForm()
-    print(dir(form._fields['email']),form._fields['email'].short_name)
     if form.validate_on_submit():
         phone_number = phonenumbers.parse(form.phone.data)
         country_prefix = geocoder.region_code_for_number(phone_number)
@@ -109,9 +109,8 @@ def register():
 
 
 @app.route("/login", methods=["GET", "POST"])
+@unauthenticated_only
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("home"))
     form = LoginForm()
     if form.validate_on_submit():
         print("Hello")
@@ -125,7 +124,7 @@ def login():
         else:
             flash("Login unsuccessful. Please check Username and Password", "danger")
             return redirect(url_for("login"))
-    return render_template("auth/login/login.html", title="login", form=form)
+    return render_template("auth/login/login.html", title="login", user=current_user, form=form)
 
 
 @app.route("/logout")
@@ -137,7 +136,7 @@ def logout():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def user():
-    print(bootstrap.load_js)
+    print(dir(current_user))
     if request.method == "POST" and request.json.get("create"):
         new_order = Order(
             title=f"Order-{random.randint(2383385933, 2345678918376829)}",
@@ -176,7 +175,7 @@ def user():
     # user_orders = OrderTable(user_order)
     # print(user_orders.tr(user_orders))
     return render_template(
-        "profile/user.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
+        "profile/profile.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
     )
 
 
@@ -268,7 +267,7 @@ def reset_password_request():
         flash("Check your email for the instructions to reset your password")
         return redirect(url_for("login"))
     return render_template(
-        "reset_password_request.html", title="Reset Password", form=form
+        "auth/password/reset_password_request.html", title="Reset Password", user=current_user, form=form
     )
 
 
@@ -284,7 +283,7 @@ def reset_password(token):
             db.session.commit()
             flash("Your password has been reset.")
             return redirect(url_for("login"))
-        return render_template("reset_password.html", form=form)
+        return render_template("auth/password/reset_password.html", form=form, user=current_user)
     return redirect(url_for("index"))
 
 
@@ -395,6 +394,15 @@ def order_contributors(username, title):
     owner = User.query.filter_by(username=username).first()
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
+    #Add user to contibutors of irder by username
+    if request.method == "POST" and request.json.get("add"):
+        invitation = Notification(
+            name=f"Invitation to - {order.title}",
+            payload_json=json.dumps(""),
+            reciever=request.json.get('username'),
+        )
+        invitation.save()
+        flash("Your message has been sent.")
     return render_template("order_contributors.html", emojis=emojis,
                            user=current_user, order=order, edit=edit, limit=limit)
 
