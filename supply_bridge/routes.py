@@ -120,6 +120,7 @@ def login():
             next_page = request.args.get("next")
             if not next_page or url_parse(next_page).netloc != "":
                 next_page = url_for("user")
+            flash(f"Login successful. Welcome Back {user.username}", "success")
             return redirect(next_page)
         else:
             flash("Login unsuccessful. Please check Username and Password", "danger")
