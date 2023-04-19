@@ -1,7 +1,6 @@
 
 from supply_bridge import db
 
-
 class CRUDMixin(object):
     __table_args__ = {'extend_existing': True}
 
@@ -36,3 +35,6 @@ class CRUDMixin(object):
     def delete(self, commit=True):
         db.session.delete(self)
         return commit and db.session.commit()
+    
+
+

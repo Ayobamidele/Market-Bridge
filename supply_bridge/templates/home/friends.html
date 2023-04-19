@@ -1,0 +1,73 @@
+{% extends "home/layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/full.css') }}" />
+<style>
+	body {
+		background-image: none;
+	}
+	#nav{
+		background-image: url("{{ url_for('static', filename='images/header.png') }}");
+
+	}
+	
+</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/profile.css') }}" />
+{% endblock %}
+{% block main_content %}
+<div class="mx-auto w-11/12 my-6">
+	<div class="overflow-x-auto w-full">
+		<table class="table w-full">
+			<!-- head -->
+			<thead>
+				<tr>
+					
+					<th>Name</th>
+					<th>Job</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- row 1 -->
+				
+				{% for user in data %}
+				<tr>
+					
+					<td>
+						<div class="flex items-center space-x-3">
+							<div class="avatar">
+								<div class="mask mask-squircle w-12 h-12">
+									<img src="{{ user.image_file}}"
+										alt="{{ user.username}}" />
+								</div>
+							</div>
+							<div>
+								<div class="font-bold">{{ user.firstname }} {{ user.lastname }}</div>
+								<div class="text-sm opacity-50">@{{ user.username}}</div>
+							</div>
+						</div>
+					</td>
+					<td >
+						{% for group in user.groups %}
+						<span class="badge badge-ghost badge-sm">{{ group.name }}</span>						
+						{% endfor %}
+					</td>
+					<th>
+						<button class="btn text-white   bg-gradient-to-r from-purple-800 to-green-500 hover:from-purple-500 hover:to-green-600">Send Invite</button>
+					</th>
+					
+				</tr>
+				{% endfor %}
+				
+			</tbody>
+
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+	var body = document.getElementsByTagName('body')
+	body[0].classList.add('bg-base-200/25') 
+</script>
+{% endblock %}

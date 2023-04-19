@@ -32,7 +32,6 @@ import sqlalchemy.exc as e
 import emojis
 import random
 
-
 def get_or_create(model, **kwargs):
     """SqlAlchemy implementation of Django's get_or_create."""
     session = db.session()
@@ -58,6 +57,12 @@ def about():
         "home/about.html", title="About", user=current_user, emojis=emojis
     )
 
+
+@app.route("/friends/market")
+def friends():
+    data = User.query.filter(User.id.not_in([current_user.id]))
+    # Order.send_invitation(current_user.id,3,12)
+    return render_template("home/friends.html", user=current_user, data=data)
 
 @app.route("/register", methods=["GET", "POST"])
 @unauthenticated_only
