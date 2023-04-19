@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!--Required meta tags-->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!--Bootstrap css-->
+    {{ bootstrap.load_css() }}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+	{% block styles %}
+    {% endblock %}
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+	{%if title%}
+	<title>Market Bridge - {{title}}</title>
+	{%else%}
+		<title>Market Bridge</title>
+	{% endif %}
+</head>
+<body>
+	<header class="site-header">
+		<nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top bg-dark opacity-75">
+			<div class="container">
+				<a class="navbar-brand mr-4" href="/">Market Bridge</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" data-target="navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarToggle">
+					<div class="navbar-nav mr-auto">
+						<a class="nav-item py-2 navlink" href="{{ url_for('home') }}">Home</a>
+						<a class="nav-item py-2 navlink" href="{{ url_for('about') }}">About</a>
+					</div>
+					<!--Navbar right side-->
+					<div class="navbar-nav">
+						{% if current_user.is_anonymous %}
+						<a class="nav-item py-2 navlink login" href="{{ url_for('login') }}">Login</a>
+						<a class="nav-item py-2 navlink register" href="{{ url_for('register') }}">Register</a>
+						{% else %}
+						<a href="{{ url_for('user') }}" class="nav-item navlink">
+							<img class=" float-end float-lg-right img-thumbnail rounded-circle image-cropper" src="{{ current_user.image_file }}">
+						</a>
+						<a class="nav-item my-auto small px-3 navlink" href="{{ url_for('logout') }}">Log-out</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main role="main" class="container">
+		<div class="content-1 row">
+			<div class="col-md-8">
+				{% with messages = get_flashed_messages(with_categories=True) %}
+					{% if messages %}
+						{% for category, message in messages %}
+							<div class="alert alert-{{ category }}">
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endif %}
+				{% endwith %}
+				{% block content %}{% endblock %}
+			</div>
+			{% if not current_user.is_anonymous %}
+			<div class="col-md-4 side-bar">
+				<div class="content-section my-5">
+					<h3 class=" text-break">{{ emojis.encode(':wave:') }} Hello {{ current_user.lastname }},</h3>
+					<p class="text-muted">Let's get planning
+						<ul>
+							<a class="p-0" href="{{ url_for('notifications') }}">
+								<li class="list-group-item list-group-item-light d-flex">
+									<p class="mb-0">Notifications</p>
+									<span class=" bg-danger rounded-pill h-50 my-auto px-2 text-white m-3">{{ user.unread_notifications().__len__()}}</span>
+								</li>
+							</a>
+							<a class="p-0" href="">
+								<li class="list-group-item list-group-item-light">Orders</li>
+							</a>
+							<a class="p-0" href="">
+								<li class="list-group-item list-group-item-light">Payment</li>
+							</a>
+						</ul>
+					</p>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+		{% block content2 %}{% endblock %}
+	</main>
+	{% block content3 %}{% endblock %}
+
+	<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+	
+    {{ bootstrap.load_js() }}
+	{% block scripts %}
+    {% endblock %}
+</body>
+</html>
