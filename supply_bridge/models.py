@@ -17,9 +17,15 @@ class OrderStatus(enum.Enum):
     delivered_unpaid = "waiting payment"
     delivered_paid = "delivered"
 
-class NotificationType(enum.Enum):
-    invitation = "Invitation"
-    greeting = "Greeting"
+class InvitationStatus(enum.Enum):
+    accepted = "Accepted"
+    denied = "Denied"
+    pending = "Pending"
+
+class OrderGroupRoleStatus(enum.Enum):
+    admin = "Admin"
+    moderator = "Moderator"
+    contributor = "Contributor"
 
 # mapping tables
 UserGroup = db.Table(
@@ -64,6 +70,17 @@ OrderSuppliers = db.Table(
         "order_id",
         db.Integer,
         db.ForeignKey("order.id"),
+    ),
+)
+
+OrderGroupMembers = db.Table(
+    "order_group_members",
+    db.Model.metadata,
+    db.Column("ordergrouprole", db.Integer, db.ForeignKey("ordergrouprole.id")),
+    db.Column(
+        "ordergroup_id",
+        db.Integer,
+        db.ForeignKey("ordergroup.id"),
     ),
 )
 
@@ -174,9 +191,24 @@ class Notification(db.Model, CRUDMixin):
     timestamp = db.Column(db.Float, default=time)
     payload_json = db.Column(db.Text)
     read = db.Column(db.Boolean, default=False)
-    messsage_type = db.Column(
-        db.Enum(NotificationType),
-        default=NotificationType.greeting,
+
+    def get_data(self):
+        return json.loads(str(self.payload_json))
+
+
+class Invitation(db.Model, CRUDMixin):
+    __tablename__ = "invitation"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    sender_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    reciever_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    timestamp = db.Column(db.Float, default=time)
+    payload_json = db.Column(db.Text)
+    read = db.Column(db.Boolean, default=False)
+    status = db.Column(
+        db.Enum(InvitationStatus),
+        default=InvitationStatus.pending,
         # nullable=False
     )
 
@@ -270,6 +302,25 @@ class Supplier(db.Model, CRUDMixin):
         "Order", secondary=OrderSuppliers, back_populates="suppliers", uselist=True
     )
 
+
+class OrderGroup(db.Model, CRUDMixin):
+    __tablename__ = "ordergroup"
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id"))
+    owner = db.Column(db.Integer, db.ForeignKey("users.id"))
+    members = db.relationship(
+        "OrderGroupRole", secondary=OrderGroupMembers, uselist=True
+    )
+
+class OrderGroupRole(db.Model, CRUDMixin):
+    __tablename__ = "ordergrouprole"
+    id = db.Column(db.Integer, primary_key=True)
+    ordergroup_id = db.Column(db.Integer, db.ForeignKey("ordergroup.id"))
+    user = db.Column(db.Integer, db.ForeignKey("users.id"))
+    role = db.Column(
+        db.Enum(OrderGroupRoleStatus),
+        default=OrderGroupRoleStatus.contributor
+    )    
 
 class Order(db.Model, CRUDMixin):
     __tablename__ = "order"
