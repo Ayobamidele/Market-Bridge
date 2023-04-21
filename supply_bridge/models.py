@@ -212,8 +212,9 @@ class Invitation(db.Model, CRUDMixin):
 
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(128))
+	receiver_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 	sender_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-	reciever_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+	group_id = db.Column(db.Integer, db.ForeignKey("ordergroup.id"))
 	timestamp = db.Column(db.Float, default=time)
 	payload_json = db.Column(db.Text)
 	read = db.Column(db.Boolean, default=False)
@@ -335,7 +336,7 @@ class OrderGroupRole(db.Model, CRUDMixin):
 
 class Order(db.Model, CRUDMixin):
 	__tablename__ = "order"
-
+	# I have o make a correction and create orders for vendors whicj=h eand dropping thee database.
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(100), nullable=False)
 	date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -381,7 +382,7 @@ class Order(db.Model, CRUDMixin):
 		self.save()
 		return object
 	
-	def send_invitation(self,sender_id, recipient_id, order_id):
+	def send_invitation(self,sender_id, recipient_id):
 		sender = User.get(sender_id)
 		recipient = User.get(recipient_id)
 		if sender and recipient:
@@ -392,7 +393,8 @@ class Order(db.Model, CRUDMixin):
 			Invitation.create(
 				name=self.title,
 				sender_id=sender.id,
-				reciever_id=recipient.id,
+				receiver_id=recipient.id,
+				group_id=self.group.id
 			)
 
 

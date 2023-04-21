@@ -1,15 +1,15 @@
 {% extends "home/layout.html" %}
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/full.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/profile.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/full.css') }}" />
 {% endblock %}
-{% block content %}
+{% block main_content %}
 <div class="p-16">
 	<div class="p-8 bg-base-100/100 shadow mt-24">
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
 				<div>
-					<p class="font-bold text-gray-700 text-xl">22</p>
+					<p class="font-bold text-gray-700 text-xl">{{ user.orders.__len__() }}</p>
 					<p class="text-gray-400">Orders</p>
 				</div>
 				<div>
@@ -49,4 +49,10 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+	var body = document.getElementsByTagName('body')
+	body[0].classList.add('bg-base-200/25') 
+</script>
 {% endblock %}

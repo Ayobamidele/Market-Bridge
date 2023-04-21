@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 # from flask_principal import Principal
 from flask_security import Security, SQLAlchemySessionUserDatastore
-
+from flask_jsglue import JSGlue
 from .config import Config
 
 app = Flask(__name__, template_folder='templates')
@@ -19,7 +19,7 @@ mail = Mail(app)
 # principals = Principal(app)
 login = LoginManager(app)
 login.login_view = 'login'
-
+jsglue = JSGlue(app)
 from supply_bridge import routes, models
 
 # load users, roles for a session

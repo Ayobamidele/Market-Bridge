@@ -10,6 +10,7 @@
 	<meta name="keywords" content="" />
 
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tailwind.min.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/flowbite.min.css') }}" />
 	<!--Replace with your tailwind.css once created-->
 	<link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
 	<script src="{{ url_for('static', filename='js/tailwind.js') }}"></script>
@@ -44,7 +45,7 @@
 						class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
 						href="#">
 						Market<span
-							class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-white-500 to-purple-500">Bridge</span>
+							class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-white-500 to-purple-500 leading-loose">Bridge</span>
 					</a>
 
 					<div class="flex w-1/2 justify-end content-center">
@@ -97,11 +98,6 @@
 									href="#">
 									Notification
 								</a>
-								<a href="{{ url_for('friends') }}"
-									class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-purple-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-									href="#">
-									Friends
-								</a>
 								<a href="{{ url_for('logout') }}"
 									class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-800 hover:bg-red-100 focus:ring-2 focus:ring-purple-500 dark:text-red-400 dark:hover:bg-gray-700 dark:hover:text-red-300"
 									href="#">
@@ -127,12 +123,16 @@
 
 	{% endblock %}
 
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 	{% block scripts %}
 
 	{% endblock %}
 	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/flowbite.min.js') }}"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@preline/preline@1.0.0/dist/hs-ui.bundle.min.js"></script>
+	{% block sub_scripts %}
 
+	{% endblock %}
 	{% with messages = get_flashed_messages(with_categories=True) %}
 	{% if messages %}
 	{% for category, message in messages %}

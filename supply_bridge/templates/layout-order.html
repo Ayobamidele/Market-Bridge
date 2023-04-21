@@ -25,6 +25,10 @@
 		<h3 class="">{{order.title}}</h3>
 	</a>
 	<div class=" d-flex w-100" style="height: 30px;">
+		<a class="p-0  pb-3" href="{{ url_for('friends', order=order) }}">
+			<span class="badge bg-gradient-light bg-secondary text-white p-5  my-auto opacity-50">Friends</span>
+		</a>
+
 		<span class="badge bg-gradient-light bg-secondary text-white  my-auto opacity-50">{{order.status.value}}</span>
 		<small class="badge px-2 my-auto">{{order.date_created.date()}}</small>
 		<div class="  d-flex mx-2 ml-4 contributors">

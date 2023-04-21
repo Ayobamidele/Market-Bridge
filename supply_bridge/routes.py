@@ -5,6 +5,7 @@ from flask import (
     url_for,
     send_from_directory,
     request,
+    make_response
 )
 from werkzeug.urls import url_parse
 from supply_bridge import app, db, bootstrap
@@ -20,6 +21,7 @@ from supply_bridge.forms import (
 from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
 from supply_bridge.email import send_password_reset_email
 from supply_bridge.decorators import authorise_order_access, unauthenticated_only
+from supply_bridge.invitation import check_connection
 from flask_security import roles_accepted
 import json
 import phonenumbers
@@ -56,13 +58,6 @@ def about():
     return render_template(
         "home/about.html", title="About", user=current_user, emojis=emojis
     )
-
-
-@app.route("/friends/market")
-def friends():
-    data = User.query.filter(User.id.not_in([current_user.id]))
-    # Order.send_invitation(current_user.id,3,12)
-    return render_template("home/friends.html", user=current_user, data=data)
 
 @app.route("/register", methods=["GET", "POST"])
 @unauthenticated_only
@@ -374,7 +369,7 @@ def get_notification(id):
     )
 
 
-@app.route("/orders/<username>/<title>", methods=["GET", "POST"])
+@app.route("/order/<username>/<title>", methods=["GET", "POST"])
 @login_required
 @authorise_order_access
 def create_order(username, title):
@@ -391,8 +386,29 @@ def create_order(username, title):
         limit=limit,
     )
 
+@app.route("/<username>/<title>/friends/market", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def friends(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    data = User.query.filter(User.id.not_in([current_user.id]))
+    result = []
+    for user in data:
+        user_data = {"user" : user, "connection":check_connection(user.id, order.group.id)}
+        result.append(user_data)
+    if request.method == "POST" and request.json.get("connect"):
+        user = request.json.get('user')
+        if check_connection(user, order.id)['status'] == None:
+            # order.send_invitation(current_user.id, int(user))
+            return{
+				"status":False,
+				"text":"Request has been sent. Waiting for Response",
+				"style":"btn flex flex-nowrap ml-auto mr-20 btn-disabled text-primary animate-pulse"
+                }, 200
+    return render_template("home/friends.html", user=current_user, order=order, result=result)
 
-@app.route("/orders/<username>/<title>/contributors", methods=["GET", "POST"])
+@app.route("/order/<username>/<title>/contributors", methods=["GET", "POST"])
 @login_required
 @authorise_order_access
 def order_contributors(username, title):
@@ -400,15 +416,16 @@ def order_contributors(username, title):
     owner = User.query.filter_by(username=username).first()
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
-    #Add user to contibutors of irder by username
+    # Add user to contibutors of order by username
     if request.method == "POST" and request.json.get("add"):
-        invitation = Notification(
-            name=f"Invitation to - {order.title}",
-            payload_json=json.dumps(""),
-            reciever=request.json.get('username'),
-        )
-        invitation.save()
-        flash("Your message has been sent.")
+        print("Testing ....")
+        # invitation = Notification(
+        #     name=f"Invitation to - {order.title}",
+        #     payload_json=json.dumps(""),
+        #     reciever=request.json.get('username'),
+        # )
+        # invitation.save()
+        # flash("Your message has been sent.")
     return render_template("order_contributors.html", emojis=emojis,
                            user=current_user, order=order, edit=edit, limit=limit)
 

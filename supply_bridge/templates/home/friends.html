@@ -1,5 +1,6 @@
 {% extends "home/layout.html" %}
 {% block styles %}
+{{ JSGlue.include() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/full.css') }}" />
 <style>
 	body {
@@ -9,6 +10,21 @@
 		background-image: url("{{ url_for('static', filename='images/header.png') }}");
 
 	}
+	.svg-loader {
+		max-width: 5em;
+		border-radius: 3px;
+		fill: none;
+		stroke: #222;
+		stroke-linecap: round;
+		stroke-width: 8%
+	}
+	
+	use {
+		stroke: #fff;
+		animation: a 2s linear infinite
+	}
+	
+	@keyframes a { to { stroke-dashoffset: 0px } }
 	
 </style>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/profile.css') }}" />
@@ -22,38 +38,39 @@
 				<tr>
 					
 					<th>Name</th>
-					<th>Job</th>
+					<th></th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				<!-- row 1 -->
 				
-				{% for user in data %}
+				{% for user in result %}
 				<tr>
 					
 					<td>
 						<div class="flex items-center space-x-3">
 							<div class="avatar">
 								<div class="mask mask-squircle w-12 h-12">
-									<img src="{{ user.image_file}}"
-										alt="{{ user.username}}" />
+									<img src="{{ user.user.image_file}}"
+										alt="{{ user.user.username}}" />
 								</div>
 							</div>
 							<div>
-								<div class="font-bold">{{ user.firstname }} {{ user.lastname }}</div>
-								<div class="text-sm opacity-50">@{{ user.username}}</div>
+								<div class="font-bold">{{ user.user.firstname }} {{ user.user.lastname }}</div>
+								<div class="text-sm opacity-50">@{{ user.user.username}}</div>
 							</div>
 						</div>
 					</td>
 					<td >
-						{% for group in user.groups %}
+						{% for group in user.user.groups %}
 						<span class="badge badge-ghost badge-sm">{{ group.name }}</span>						
 						{% endfor %}
 					</td>
-					<th>
-						<button class="btn text-white   bg-gradient-to-r from-purple-800 to-green-500 hover:from-purple-500 hover:to-green-600">Send Invite</button>
-					</th>
+
+					<td>
+						<button data-id="{{ user.user.id }}" class="btn flex flex-nowrap ml-auto mr-20 {{ user.connection.style }}">{{ user.connection.text|safe }}</button>
+					</td>
 					
 				</tr>
 				{% endfor %}
@@ -65,9 +82,13 @@
 </div>
 
 {% endblock %}
-{% block scripts %}
-<script>
-	var body = document.getElementsByTagName('body')
-	body[0].classList.add('bg-base-200/25') 
+{% block sub_scripts %}
+<script text="text/javascript">
+	window.appConfig = {
+		"title": "{{order.title}}",
+		"username": "{{order.get_owner().username}}"
+	}
+</script>
+<script src="{{ url_for('static', filename='js/market.js') }}">
 </script>
 {% endblock %}
