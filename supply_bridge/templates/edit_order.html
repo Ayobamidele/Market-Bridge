@@ -1,0 +1,76 @@
+{% extends 'layout/order_layout.html' %}
+
+{% block content %}
+<style>
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+label {
+  font-weight: 700;
+}
+
+input[type="text"],
+textarea {
+  border: 1px solid #ced4da;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease-in-out;
+}
+
+button[type="submit"]:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4">Edit Order</h1>
+    <form method="post">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" name="title" value="{{ order.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" name="description">{{ order.description }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
