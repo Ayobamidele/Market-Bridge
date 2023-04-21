@@ -19,7 +19,7 @@ from supply_bridge.forms import (
 )
 from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
 from supply_bridge.email import send_password_reset_email
-from supply_bridge.decorators import authorise_order_access
+from supply_bridge.decorators import authorise_order_access, unauthenticated_only
 from flask_security import roles_accepted
 import json
 import phonenumbers
@@ -31,7 +31,6 @@ from datetime import datetime
 import sqlalchemy.exc as e
 import emojis
 import random
-
 
 def get_or_create(model, **kwargs):
     """SqlAlchemy implementation of Django's get_or_create."""
@@ -59,7 +58,14 @@ def about():
     )
 
 
+@app.route("/friends/market")
+def friends():
+    data = User.query.filter(User.id.not_in([current_user.id]))
+    # Order.send_invitation(current_user.id,3,12)
+    return render_template("home/friends.html", user=current_user, data=data)
+
 @app.route("/register", methods=["GET", "POST"])
+@unauthenticated_only
 def register():
     """
     It takes the phone number from the form, parses it, gets the country code, creates a user, sets the
@@ -70,7 +76,6 @@ def register():
     created is a boolean specifying whether a new object was created.
     """
     form = RegistrationForm()
-    print(dir(form._fields['email']),form._fields['email'].short_name)
     if form.validate_on_submit():
         phone_number = phonenumbers.parse(form.phone.data)
         country_prefix = geocoder.region_code_for_number(phone_number)
@@ -109,9 +114,8 @@ def register():
 
 
 @app.route("/login", methods=["GET", "POST"])
+@unauthenticated_only
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("home"))
     form = LoginForm()
     if form.validate_on_submit():
         print("Hello")
@@ -121,11 +125,12 @@ def login():
             next_page = request.args.get("next")
             if not next_page or url_parse(next_page).netloc != "":
                 next_page = url_for("user")
+            flash(f"Login successful. Welcome Back {user.username}", "success")
             return redirect(next_page)
         else:
             flash("Login unsuccessful. Please check Username and Password", "danger")
             return redirect(url_for("login"))
-    return render_template("auth/login/login.html", title="login", form=form)
+    return render_template("auth/login/login.html", title="login", user=current_user, form=form)
 
 
 @app.route("/logout")
@@ -137,7 +142,7 @@ def logout():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def user():
-    print(bootstrap.load_js)
+    print(dir(current_user))
     if request.method == "POST" and request.json.get("create"):
         new_order = Order(
             title=f"Order-{random.randint(2383385933, 2345678918376829)}",
@@ -176,7 +181,7 @@ def user():
     # user_orders = OrderTable(user_order)
     # print(user_orders.tr(user_orders))
     return render_template(
-        "profile/user.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
+        "profile/profile.html", user=current_user, emojis=emojis, orders=user_order, limit=limit
     )
 
 
@@ -268,7 +273,7 @@ def reset_password_request():
         flash("Check your email for the instructions to reset your password")
         return redirect(url_for("login"))
     return render_template(
-        "reset_password_request.html", title="Reset Password", form=form
+        "auth/password/reset_password_request.html", title="Reset Password", user=current_user, form=form
     )
 
 
@@ -284,7 +289,7 @@ def reset_password(token):
             db.session.commit()
             flash("Your password has been reset.")
             return redirect(url_for("login"))
-        return render_template("reset_password.html", form=form)
+        return render_template("auth/password/reset_password.html", form=form, user=current_user)
     return redirect(url_for("index"))
 
 
@@ -387,6 +392,55 @@ def create_order(username, title):
     )
 
 
+@app.route("/orders/<username>/<title>/edit", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def edit_order(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    
+    if not order.can_edit(current_user):
+        return redirect(url_for("forbidden"))
+        
+    if request.method == "POST":
+        order.title = request.form.get("title")
+        order.description = request.form.get("description")
+        
+        db.session.commit()
+        flash("Order updated successfully.")
+        return redirect(url_for("create_order", username=username, title=title))
+    
+    return render_template("edit_order.html", order=order)
+
+@app.route("/orders/<username>/<title>/assign", methods=["GET", "POST"])
+@login_required
+def assign_items(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+
+    if request.method == "POST":
+        assigned_items = request.form.getlist("assigned_items")
+
+        order.assigned_items.clear()
+
+        for item_id in assigned_items:
+            item = Order.query.get(item_id)
+            order.assigned_items.append(item)
+
+        db.session.commit()
+        flash("Items assigned successfully.")
+        return redirect(url_for("create_order", username=username, title=title))
+
+    # Get the items that can be assigned to the order
+    available_items = Order.query.filter(Order.vendor == current_user).all()
+
+    return render_template(
+        "assign_items.html",
+        order=order,
+        available_items=available_items,
+    )
+
+
 @app.route("/orders/<username>/<title>/contributors", methods=["GET", "POST"])
 @login_required
 @authorise_order_access
@@ -395,6 +449,15 @@ def order_contributors(username, title):
     owner = User.query.filter_by(username=username).first()
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
+    #Add user to contibutors of irder by username
+    if request.method == "POST" and request.json.get("add"):
+        invitation = Notification(
+            name=f"Invitation to - {order.title}",
+            payload_json=json.dumps(""),
+            reciever=request.json.get('username'),
+        )
+        invitation.save()
+        flash("Your message has been sent.")
     return render_template("order_contributors.html", emojis=emojis,
                            user=current_user, order=order, edit=edit, limit=limit)
 
