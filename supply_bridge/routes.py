@@ -392,6 +392,55 @@ def create_order(username, title):
     )
 
 
+@app.route("/orders/<username>/<title>/edit", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def edit_order(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    
+    if not order.can_edit(current_user):
+        return redirect(url_for("forbidden"))
+        
+    if request.method == "POST":
+        order.title = request.form.get("title")
+        order.description = request.form.get("description")
+        
+        db.session.commit()
+        flash("Order updated successfully.")
+        return redirect(url_for("create_order", username=username, title=title))
+    
+    return render_template("edit_order.html", order=order)
+
+@app.route("/orders/<username>/<title>/assign", methods=["GET", "POST"])
+@login_required
+def assign_items(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+
+    if request.method == "POST":
+        assigned_items = request.form.getlist("assigned_items")
+
+        order.assigned_items.clear()
+
+        for item_id in assigned_items:
+            item = Order.query.get(item_id)
+            order.assigned_items.append(item)
+
+        db.session.commit()
+        flash("Items assigned successfully.")
+        return redirect(url_for("create_order", username=username, title=title))
+
+    # Get the items that can be assigned to the order
+    available_items = Order.query.filter(Order.vendor == current_user).all()
+
+    return render_template(
+        "assign_items.html",
+        order=order,
+        available_items=available_items,
+    )
+
+
 @app.route("/orders/<username>/<title>/contributors", methods=["GET", "POST"])
 @login_required
 @authorise_order_access
