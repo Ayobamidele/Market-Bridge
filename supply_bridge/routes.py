@@ -386,27 +386,6 @@ def create_order(username, title):
         limit=limit,
     )
 
-@app.route("/<username>/<title>/friends/market", methods=["GET", "POST"])
-@login_required
-@authorise_order_access
-def friends(username, title):
-    owner = User.query.filter_by(username=username).first()
-    order = Order.query.filter_by(title=title, owner=owner.id).first()
-    data = User.query.filter(User.id.not_in([current_user.id]))
-    result = []
-    for user in data:
-        user_data = {"user" : user, "connection":check_connection(user.id, order.group.id)}
-        result.append(user_data)
-    if request.method == "POST" and request.json.get("connect"):
-        user = request.json.get('user')
-        if check_connection(user, order.id)['status'] == None:
-            # order.send_invitation(current_user.id, int(user))
-            return{
-				"status":False,
-				"text":"Request has been sent. Waiting for Response",
-				"style":"btn flex flex-nowrap ml-auto mr-20 btn-disabled text-primary animate-pulse"
-                }, 200
-    return render_template("home/friends.html", user=current_user, order=order, result=result)
 
 @app.route("/order/<username>/<title>/contributors", methods=["GET", "POST"])
 @login_required
