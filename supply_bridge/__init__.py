@@ -54,7 +54,7 @@ ma = Marshmallow(app)
 
 # admin = _Admin(app)
 
-from supply_bridge import routes, models, admin
+from supply_bridge import routes, models
 from flask_admin.contrib.sqla import ModelView
 # for i in result():
 # 	admin.add_model_view(i)
