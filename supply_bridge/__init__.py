@@ -5,10 +5,10 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
 # from flask_principal import Principal
-from flask_statistics import Statistics
+# from flask_statistics import Statistics
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_jsglue import JSGlue
-from flask_admin import Admin
+# from flask_admin import Admin
 from .config import Config
 from flask_serialize import FlaskSerialize
 from flask_marshmallow import Marshmallow
@@ -60,8 +60,8 @@ from flask_admin.contrib.sqla import ModelView
 # 	admin.add_model_view(i)
 
 
-statistics = Statistics(app, db, models.Request)
-print(statistics.api)
+# statistics = Statistics(app, db, models.Request)
+# print(statistics.api)
 # Flask and Flask-SQLAlchemy initialization here
 # admin.add_model_views(model_list)
 # print(model_list)
