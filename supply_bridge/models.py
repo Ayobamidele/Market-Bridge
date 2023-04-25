@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy_utils import PhoneNumber
-from supply_bridge import db, login, Config
+from supply_bridge import db, login, Config, fs_mixin, ma
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -9,6 +9,37 @@ import json
 from supply_bridge.utility import CRUDMixin
 import enum
 from random_username.generate import generate_username
+from decimal import Decimal 
+from sqlalchemy.types import TypeDecorator, Integer
+from marshmallow_sqlalchemy import fields
+
+
+
+class SqliteDecimal(TypeDecorator):
+	# This TypeDecorator use Sqlalchemy Integer as impl. It converts Decimals
+	# from Python to Integers which is later stored in Sqlite database.
+	impl = Integer
+
+	def __init__(self, scale):
+		# It takes a 'scale' parameter, which specifies the number of digits
+		# to the right of the decimal point of the number in the column.
+		TypeDecorator.__init__(self)
+		self.scale = scale
+		self.multiplier_int = 10 ** self.scale
+
+	def process_bind_param(self, value, dialect):
+		# e.g. value = Column(SqliteDecimal(2)) means a value such as
+		# Decimal('12.34') will be converted to 1234 in Sqlite
+		if value is not None:
+			value = int(Decimal(value) * self.multiplier_int)
+		return value
+
+	def process_result_value(self, value, dialect):
+		# e.g. Integer 1234 in Sqlite will be converted to Decimal('12.34'),
+		# when query takes place.
+		if value is not None:
+			value = Decimal(value) / self.multiplier_int
+		return value
 
 
 class OrderStatus(enum.Enum):
@@ -207,6 +238,9 @@ class Notification(db.Model, CRUDMixin):
 		return json.loads(str(self.payload_json))
 
 
+
+
+
 class Invitation(db.Model, CRUDMixin):
 	__tablename__ = "invitation"
 
@@ -334,7 +368,7 @@ class OrderGroupRole(db.Model, CRUDMixin):
 		default=OrderGroupRoleStatus.contributor
 	)    
 
-class Order(db.Model, CRUDMixin):
+class Order(db.Model, CRUDMixin, fs_mixin):
 	__tablename__ = "order"
 	# I have o make a correction and create orders for vendors whicj=h eand dropping thee database.
 	id = db.Column(db.Integer, primary_key=True)
@@ -404,7 +438,7 @@ class OrderItem(db.Model, CRUDMixin):
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(100), nullable=False)
 	quantity = db.Column(db.Integer, nullable=False)
-	price = db.Column(db.DECIMAL)
+	price = db.Column(SqliteDecimal(scale=2))
 	vendors = db.relationship(
 		"Vendor", secondary=OrderItemsVendor, back_populates="order_items", uselist=True
 	)
@@ -412,3 +446,43 @@ class OrderItem(db.Model, CRUDMixin):
 		"Order", secondary=OrderItems, back_populates="order_items", uselist=True
 	)
 	description = db.Column(db.String(1000), nullable=True)
+	# remembet to change null to false after resetting this table
+	date_created = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
+	
+	def __repr__(self):
+		return f"Order Item ('{self.title}','{self.date_created}')"
+
+
+class ItemSchema(ma.SQLAlchemySchema):
+	class Meta:
+		fields = ('id', 'title',"vendors", "price")
+		model = OrderItem
+
+
+class Orderchema(ma.SQLAlchemyAutoSchema):
+	order_items = ma.List(ma.Nested(ItemSchema))
+	class Meta:
+		model = Order
+		exclude = ("status",)
+	
+
+
+class Request(db.Model):
+	__tablename__ = "request"
+
+	index = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	response_time = db.Column(db.Float)
+	date = db.Column(db.DateTime)
+	method = db.Column(db.String)
+	size = db.Column(db.Integer)
+	status_code = db.Column(db.Integer)
+	path = db.Column(db.String)
+	user_agent = db.Column(db.String)
+	remote_address = db.Column(db.String)
+	exception = db.Column(db.String)
+	referrer = db.Column(db.String)
+	browser = db.Column(db.String)
+	platform = db.Column(db.String)
+	mimetype = db.Column(db.String)
+

@@ -1,3 +1,10 @@
-# The code is importing the `ModelView` class from the `flask_admin.contrib.sqla` module. This class
-# is used to create views for SQLAlchemy models in Flask-Admin.
-# from flask_admin.contrib.sqla import ModelVie)
+
+
+
+
+# model_dict = {x[0]: x[1] for x in db.metadata.tables.items()}
+# model_list = [d for d in model_dict.values()]
+
+		
+
+# # Register the view

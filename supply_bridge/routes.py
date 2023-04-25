@@ -4,11 +4,10 @@ from flask import (
     render_template,
     url_for,
     send_from_directory,
-    request,
-    make_response
+    request
 )
 from werkzeug.urls import url_parse
-from supply_bridge import app, db, bootstrap
+from supply_bridge import app, db
 from supply_bridge.forms import (
     LoginForm,
     RegistrationForm,
@@ -18,7 +17,7 @@ from supply_bridge.forms import (
     UserEdit,
     PhoneChangeForm
 )
-from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus
+from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus, Orderchema, ItemSchema
 from supply_bridge.email import send_password_reset_email
 from supply_bridge.decorators import authorise_order_access, unauthenticated_only
 from supply_bridge.invitation import check_connection
@@ -373,10 +372,12 @@ def get_notification(id):
 @login_required
 @authorise_order_access
 def create_order(username, title):
+    from urllib.parse import quote,unquote
     limit = 6
     owner = User.query.filter_by(username=username).first()
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
+    print(unquote(url_for('get_order', title=order.title, username=order.get_owner().username)))
     return render_template(
         "create_list.html",
         emojis=emojis,
@@ -385,6 +386,96 @@ def create_order(username, title):
         order=order,
         limit=limit,
     )
+
+@app.route("/order/<username>/<title>/items", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def get_order(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    order_data = Orderchema().dump(order)
+    data = {
+                **order_data,
+				"status": True,
+                "edit": order.can_edit(current_user),
+                "limit": 6
+            }
+    print(data)
+    return data
+
+
+@app.route("/order/<username>/<title>/edit", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def edit_order(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    
+    if not order.can_edit(current_user):
+        return redirect(url_for("forbidden"))
+        
+    if request.method == "POST":
+        order.title = request.form.get("title")
+        order.description = request.form.get("description")
+        
+        db.session.commit()
+        flash("Order updated successfully.","success")
+        return redirect(url_for("create_order", username=username, title=order.title))
+    
+    return render_template("edit_order.html", order=order,emojis=emojis,user=current_user,limit=6)
+
+@app.route("/orders/<username>/<title>/assign", methods=["GET", "POST"])
+@login_required
+def assign_items(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+
+    if request.method == "POST":
+        assigned_items = request.form.getlist("assigned_items")
+
+        order.assigned_items.clear()
+
+        for item_id in assigned_items:
+            item = Order.query.get(item_id)
+            order.assigned_items.append(item)
+
+        db.session.commit()
+        flash("Items assigned successfully.")
+        return redirect(url_for("create_order", username=username, title=title))
+
+    # Get the items that can be assigned to the order
+    available_items = Order.query.filter(Order.vendor == current_user).all()
+
+    return render_template(
+        "assign_items.html",
+        order=order,
+        available_items=available_items,
+    )
+
+
+
+@app.route("/<username>/<title>/friends/market", methods=["GET", "POST"])
+@login_required
+@authorise_order_access
+def friends(username, title):
+    owner = User.query.filter_by(username=username).first()
+    order = Order.query.filter_by(title=title, owner=owner.id).first()
+    data = User.query.filter(User.id.not_in([current_user.id]))
+    result = []
+    for user in data:
+        user_data = {"user" : user, "connection":check_connection(user.id, order.group.id)}
+        result.append(user_data)
+    if request.method == "POST" and request.json.get("connect"):
+        user = request.json.get('user')
+        if check_connection(user, order.id)['status'] == None:
+            # Working on setting up invitation page for users
+            # order.send_invitation(current_user.id, int(user))
+            return {
+				"status":False,
+				"text":"Request has been sent. Waiting for Response",
+				"style":"btn flex flex-nowrap ml-auto mr-20 btn-disabled text-primary animate-pulse"
+                }, 200
+    return render_template("home/friends.html", user=current_user, order=order, result=result)
 
 
 @app.route("/order/<username>/<title>/contributors", methods=["GET", "POST"])

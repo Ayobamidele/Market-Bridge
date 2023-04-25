@@ -28,6 +28,9 @@
 		<a class="p-0 mx-2" href="{{ url_for('friends', title=order.title, username=order.get_owner().username ) }}">
 			<span class="badge bg-gradient-light bg-secondary text-white px-3 py-2 my-auto opacity-50">Friends</span>
 		</a>
+		<a class="p-0 mx-2" href="{{ url_for('edit_order', username=order.get_owner().username, title=order.title) }}">
+			<span class="badge bg-gradient-light bg-warning text-white px-3 py-2 my-auto">Edit</span>
+		</a>
 		<span class="badge bg-gradient-light bg-secondary text-white  my-auto opacity-50">{{order.status.value}}</span>
 		<small class="badge px-2 my-auto">{{order.date_created.date()}}</small>
 		<div class="  d-flex mx-2 ml-4 contributors">
