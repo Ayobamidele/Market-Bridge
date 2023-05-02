@@ -1,68 +1,101 @@
-var windowdata = window.appConfig
+var windowdata = window.appConfig;
+var item = {
+	"title":"test"
+}
+let row_template = `<tr class="bg-white">
+<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+	<a href="#" class="font-bold text-blue-500 hover:underline"
+		>${item.title}</a
+	>
+</td>
+
+<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+
+	<label class="swap swap-flip">
+		<!-- this hidden checkbox controls the state -->
+		<input type="checkbox" />
+		<div class="swap-on">
+			<div class="flex">
+				<span class="inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+					Measure
+				</span>
+
+				<input type="number" min="1"  step="0.01"
+				 class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00">
+					
+				<select class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+					<option>Choose a Measure</option>
+					<option value="CA">Kilogram</option>
+					<option value="TX">Litre</option>
+					<option value="WH">Tin-Can</option>
+					<option value="WH" class="small text-bg-primary">Not availabele? Create container</option>
+				</select>
+			</div>
+		</div>
+		
+		<div class="swap-off">
+			<div class="flex">
+				<span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+					Price
+				</span>
+				<input type="text" name="currency-field" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency" class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00">			
+			</div>
+		</div>
+
+	</label>
+
+</td>
+
+
+<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+	<input type="number" min="1"  step="1" data-type="quantity" class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+	   
+</td>
+
+<td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
+</tr>`;
 
 // new gridjs.Grid({
 // 	columns: ["Item", "Price"],
 // 	server: {
 // 		url: windowdata.url ,
 // 		then: data => data.order_items.map(item => [item.title, item.price])
-// 	  } 
+// 	  }
 //   }).render(document.getElementById("wrapper"));
-async function get_item_data(){
-var url = windowdata.url
-const response = await fetch(url, {
-	method: 'GET',
-	headers: {
-		'accept': 'application/json',
-		'Content-Type': 'application/json'
-	},
-}).then(response => {
-	if(response.status == 200){
-		return response.json();
-	}
-}).then(json => {
-	console.log(json)
-}).catch(error => {
-	console.log(error)
-})
-}  
+async function get_item_data() {
+  var url = windowdata.url;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (response.status == 200) {
+        return response.json();
+      }
+    })
+    .then((json) => {
+      console.log(json);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 // $("#countries").change(function () {
 // 	console.log(this)
 // 	this.disabled = true;
 // });
 
-function updateOption(dropdown)
-{
-    var option_value = dropdown.options[dropdown.selectedIndex].value;
-    var option_text = dropdown.options[dropdown.selectedIndex].text;
-    // alert('The option value is "' + option_value + '"\nand the text is "' + option_text + '"');
-	return option_value, option_text
+function updateOption(dropdown) {
+  var option_value = dropdown.options[dropdown.selectedIndex].value;
+  var option_text = dropdown.options[dropdown.selectedIndex].text;
+  // alert('The option value is "' + option_value + '"\nand the text is "' + option_text + '"');
+  return option_value, option_text;
 }
 
-var dropd= document.getElementById("countries").parentNode
-dropd.addEventListener('focusin', ev => {
-	console.log("focus in", ev.target)
-	ev.target.classList.remove('disabled')
-
-	// ev.target.disabled = false
-});
-dropd.addEventListener('focusout', ev => {
-	console.log("focus out", ev.target.parentNode)
-	// ev.target.disabled = true
-	ev.target.parentNode.classList.add('disabled')
-});
-dropd.addEventListener('change', ev => {
-	console.log("change",ev.target.parentNode)
-	updateOption(ev.target)
-	// ev.target.blur()
-});
-dropd.addEventListener('click', ev => {
-// ev.target.disabled = false;
-if ("disabled" in ev.target.firstElementChild.classList){
-	ev.target.firstElementChild.classList.remove('disabled')
-}
-console.log(ev.target)
-});
 // $("#countries").on('click', function () {
 // 	this.disabled = false
 // 	console.log(this.disabled,"click")
@@ -90,11 +123,100 @@ console.log(ev.target)
 // 	- modal
 // 		- All_active_users_making_changes_to_that_order_item
 
-var order = document.getElementById("order-input")
-order.onclick = function (e) {
-	console.log(order.value)
-	order_value= order.value=""
-		// console.log(e)
-		//Create order items
-		updateTableFromData([order_value, "eee"])
-	}
+//Create order items
+$("#order-input").on({
+  keyup: function (e) {
+    if (e.keyCode === 13) {
+      console.log(e.target.value);
+		var item = {
+			"title": e.target.value
+		}
+      $("#tbody").append(row_template);
+    }
+  },
+});
+
+// Jquery Dependency
+
+$("input[data-type='currency']").on({
+  keyup: function () {
+    formatCurrency($(this));
+  },
+  blur: function () {
+    formatCurrency($(this), "blur");
+  },
+});
+
+function formatNumber(n) {
+  // format number 1000000 to 1,234,567
+  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatCurrency(input, blur) {
+  // appends $ to value, validates decimal side
+  // and puts cursor back in right position.
+
+  // get input value
+  var input_val = input.val();
+
+  // don't validate empty input
+  if (input_val === "") {
+    return;
+  }
+
+  // original length
+  var original_len = input_val.length;
+
+  // initial caret position
+  var caret_pos = input.prop("selectionStart");
+
+  let input_currency = "₦";
+
+  // check for decimal
+  if (input_val.indexOf(".") >= 0) {
+    // get position of first decimal
+    // this prevents multiple decimals from
+    // being entered
+    var decimal_pos = input_val.indexOf(".");
+
+    // split number by decimal point
+    var left_side = input_val.substring(0, decimal_pos);
+    var right_side = input_val.substring(decimal_pos);
+
+    // add commas to left side of number
+    left_side = formatNumber(left_side);
+
+    // validate right side
+    right_side = formatNumber(right_side);
+
+    // On blur make sure 2 numbers after decimal
+    if (blur === "blur") {
+      right_side += "00";
+    }
+
+    // Limit decimal to only 2 digits
+    right_side = right_side.substring(0, 2);
+
+    // join number by .
+    input_val = input_currency + left_side + "." + right_side;
+  } else {
+    // no decimal entered
+    // add commas to number
+    // remove all non-digits
+    input_val = formatNumber(input_val);
+    input_val = input_currency + input_val;
+
+    // final formatting
+    if (blur === "blur") {
+      input_val += ".00";
+    }
+  }
+
+  // send updated string to input
+  input.val(input_val);
+
+  // put caret back in the right position
+  var updated_len = input_val.length;
+  caret_pos = updated_len - original_len + caret_pos;
+  input[0].setSelectionRange(caret_pos, caret_pos);
+}
