@@ -462,18 +462,19 @@ def friends(username, title):
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     data = User.query.filter(User.id.not_in([current_user.id]))
     result = []
+    group = order.get_group()
     for user in data:
         user_data = {"user" : user, "connection":check_connection(user.id, order.group.id)}
         result.append(user_data)
     if request.method == "POST" and request.json.get("connect"):
         user = request.json.get('user')
-        if check_connection(user, order.id)['status'] == None:
+        if check_connection(user, order.group.id)['status'] == None:
             # Working on setting up invitation page for users
-            # order.send_invitation(current_user.id, int(user))
+            order.send_invitation(current_user.id, int(user))
             return {
 				"status":False,
 				"text":"Request has been sent. Waiting for Response",
-				"style":"btn flex flex-nowrap ml-auto mr-20 btn-disabled text-primary animate-pulse"
+				"style":"btn flex flex-nowrap ml-auto mr-20 btn-disabled text-primary-focus animate-pulse"
                 }, 200
     return render_template("home/friends.html", user=current_user, order=order, result=result)
 

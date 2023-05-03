@@ -11,7 +11,6 @@ import enum
 from random_username.generate import generate_username
 from decimal import Decimal 
 from sqlalchemy.types import TypeDecorator, Integer
-from marshmallow_sqlalchemy import fields
 
 
 
@@ -415,6 +414,14 @@ class Order(db.Model, CRUDMixin, fs_mixin):
 		self.order_items.append(object)
 		self.save()
 		return object
+
+	def get_group(self):
+		if self.group is None:
+			object = OrderGroup.create(order_id=self.id, owner=self.owner)
+			self.group = object
+			self.save()
+			return object
+		return self.group
 	
 	def send_invitation(self,sender_id, recipient_id):
 		sender = User.get(sender_id)
