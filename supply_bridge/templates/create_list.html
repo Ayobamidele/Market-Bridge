@@ -1,14 +1,8 @@
 {% extends 'layout/order_layout.html' %} {% block styles %} {{super()}} {{
 	JSGlue.include() }}
-<link
-	rel="stylesheet"
-	type="text/css"
-	href="{{ url_for('static', filename='css/full.css') }}"
-/>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/full.css') }}" />
 {% endblock %} {% block content3 %}
-<div
-	class="content-section d-block border border-0 p-0 px-4"
->
+<div class="content-section d-block border border-0 p-0 px-4">
 	<div class=" h-screen bg-gray-100">
 		<div class="overflow-auto rounded-lg shadow hidden md:block">
 			<table class="w-full">
@@ -19,7 +13,7 @@
 						</th>
 
 						<th class="w-1/5 text-sm font-semibold tracking-wide text-center">
-							Measurement <small>based on</small><br>(Price / Measure) 
+							Measurement <small>based on</small><br>(Price / Measure)
 						</th>
 
 
@@ -36,9 +30,7 @@
 				<tbody id="tbody" class="divide-y divide-gray-100">
 					<tr class="bg-white">
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline"
-								>10001</a
-							>
+							<a href="#" class="font-bold text-blue-500 hover:underline">10001</a>
 						</td>
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -47,33 +39,40 @@
 
 								<div class="swap-on">
 									<div class="flex">
-										<span class="swap-controller inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+										<span
+											class="swap-controller inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
 											Measure
 										</span>
 
-										<input type="number" min="1"  step="0.01"
-										 class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00">
-											
-										<select class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+										<input type="number" min="1" step="0.01"
+											class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											placeholder="0.00">
+
+										<select
+											class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 											<option>Choose a Measure</option>
 											<option value="Kg">Kilogram</option>
 											<option value="LT">Litre</option>
 											<option value="TC">Tin-Can</option>
 											<option value="create" class="small px-2 text-bg-primary"> <a>
 
-												Not availabele? Create container
-											</a>
+													Not availabele? Create container
+												</a>
 											</option>
 										</select>
 									</div>
 								</div>
-								
+
 								<div class="swap-off">
 									<div class="flex">
-										<span class="swap-controller inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+										<span
+											class="swap-controller inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
 											Price
 										</span>
-										<input type="text" name="currency-field" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency" class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0.00">			
+										<input type="text" name="currency-field" id="currency-field"
+											pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency"
+											class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											placeholder="0.00">
 									</div>
 								</div>
 
@@ -83,29 +82,36 @@
 
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<input type="number" min="1"  step="1" data-type="quantity" class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-							   
+							<input type="number" min="1" step="1" data-type="quantity"
+								class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
 						</td>
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							
-							  
-							  <div class="flex -space-x-2 overflow-hidden">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-							  </div>
-							  
-							
+
+
+							<div class="flex -space-x-2 overflow-hidden">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+							</div>
+
+
 						</td>
 					</tr>
 
 					<tr class="bg-gray-50">
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline"
-								>10002</a
-							>
+							<a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
 						</td>
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -122,9 +128,7 @@
 
 					<tr class="bg-white">
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline"
-								>10002</a
-							>
+							<a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
 						</td>
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -133,9 +137,7 @@
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
 							<span
-								class="p-1.5 text-xs font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50"
-								>Cancelled</span
-							>
+								class="p-1.5 text-xs font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">Cancelled</span>
 						</td>
 
 						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -153,35 +155,32 @@
 </div>
 <div class="border-5 border-top fixed-bottom input-bar px-3 bg-light">
 	<div class="form-group my-3">
-		<input
-			type="text"
-			class="form-control input-group-text text-left"
-			name=""
-			id="order-input"
-			placeholder="Click enter to add an item to the order"
-		/>
+		<input type="text" class="form-control input-group-text text-left" name="" id="order-input"
+			placeholder="Click enter to add an item to the order" />
 	</div>
 </div>
 
 
 {% endblock %} {% block scripts %}
+<input type="checkbox" id="measure-modal" class="modal-toggle" />
+<div class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box">
+		<h3 class="font-bold text-lg">Create a New Measure</h3>
+		<input id="measure-input" type="text" placeholder="Type here" class="input input-bordered input-primary w-full mt-4" />
+		<div class="modal-action flex justify-start">
+			<button id="submit-measure" class="btn btn-success">Yay! Create</button>
+			<label id="cancel-measure" class="btn btn-warning" for="measure-modal">Oops! Cancel</label>
+		</div>
+	</div>
+</div>
 <script>
 	window.appConfig = {
 		title: "{{order.title}}",
 		username: "{{order.get_owner().username}}",
-		url: "{{ url_for('get_order', title=order.title, username=order.get_owner().username)|safe }}",
+		items: "{{ url_for('get_order', title=order.title, username=order.get_owner().username)|safe }}",
+		create: "{{ url_for('create_order', title=order.title, username=order.get_owner().username)|safe }}",
 	};
 </script>
 <script src="{{ url_for('static', filename='js/tailwind.js') }}"></script>
 <script src="{{ url_for('static', filename='js/market-list.js') }}"></script>
-<input type="checkbox" id="my-modal-6" class="modal-toggle" />
-<div class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg">Congratulations random Internet user!</h3>
-    <p class="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-    <div class="modal-action">
-      <label for="my-modal-6" class="btn">Yay!</label>
-    </div>
-  </div>
-</div>
 {% endblock %}

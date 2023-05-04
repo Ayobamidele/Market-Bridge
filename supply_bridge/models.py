@@ -47,6 +47,10 @@ class OrderStatus(enum.Enum):
 	delivered_unpaid = "waiting payment"
 	delivered_paid = "delivered"
 
+class MeasurementType(enum.Enum):
+	price = "Price"
+	measure = "Measure"
+
 class InvitationStatus(enum.Enum):
 	accepted = "Accepted"
 	denied = "Denied"
@@ -455,6 +459,13 @@ class OrderItem(db.Model, CRUDMixin):
 	description = db.Column(db.String(1000), nullable=True)
 	# remembet to change null to false after resetting this table
 	date_created = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+	measure = db.Column(db.Integer, db.ForeignKey("measure.id"))
+	measure_quantity = db.Column(SqliteDecimal(scale=2))
+	measurement_type = db.Column(
+		db.Enum(MeasurementType),
+		default=MeasurementType.measure,
+		# nullable=False
+	)
 
 	
 	def __repr__(self):
@@ -472,7 +483,14 @@ class Orderchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = Order
 		exclude = ("status",)
-	
+
+
+
+class Measure(db.Model, CRUDMixin):
+	__tablename__ = "measure"
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(20), nullable=True)
+
 
 
 class Request(db.Model):

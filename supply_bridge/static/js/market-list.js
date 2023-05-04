@@ -1,7 +1,7 @@
 var windowdata = window.appConfig;
 
 function get_row_template(item) {
-  return `<tr class="bg-white">
+	return `<tr class="bg-white">
 	<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
 		<a href="#" class="font-bold text-blue-500 hover:underline"
 			>${item.title || "eeeeer"}</a
@@ -63,25 +63,25 @@ function get_row_template(item) {
 // 	  }
 //   }).render(document.getElementById("wrapper"));
 async function get_item_data() {
-  var url = windowdata.url;
-  const response = await fetch(url, {
-	method: "GET",
-	headers: {
-	  accept: "application/json",
-	  "Content-Type": "application/json",
-	},
-  })
-	.then((response) => {
-	  if (response.status == 200) {
-		return response.json();
-	  }
-	})
-	.then((json) => {
-	  console.log(json);
-	})
-	.catch((error) => {
-	  console.log(error);
-	});
+	var url = windowdata.items;
+	const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		})
+		.then((response) => {
+			if (response.status == 200) {
+				return response.json();
+			}
+		})
+		.then((json) => {
+			console.log(json);
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 }
 
 // $("#countries").change(function () {
@@ -90,10 +90,10 @@ async function get_item_data() {
 // });
 
 function updateOption(dropdown) {
-  var option_value = dropdown.options[dropdown.selectedIndex].value;
-  var option_text = dropdown.options[dropdown.selectedIndex].text;
-  // alert('The option value is "' + option_value + '"\nand the text is "' + option_text + '"');
-  return option_value, option_text;
+	var option_value = dropdown.options[dropdown.selectedIndex].value;
+	var option_text = dropdown.options[dropdown.selectedIndex].text;
+	// alert('The option value is "' + option_value + '"\nand the text is "' + option_text + '"');
+	return option_value, option_text;
 }
 
 // $("#countries").on('click', function () {
@@ -124,115 +124,167 @@ function updateOption(dropdown) {
 // 		- All_active_users_making_changes_to_that_order_item
 
 $(".swap-controller").on({
-  click: function () {
-	$(this).offsetParent().toggleClass("swap-active");
-  },
+	click: function () {
+		$(this).offsetParent().toggleClass("swap-active");
+		// update measurement type
+	},
 });
 
 $(".measure-options").on({
-  change: function () {
-	if (this.value === "create"){
-		console.log("create")
-		$('#my-modal-6').prop('checked', true)
-	}
-  },
+	change: function () {
+		if (this.value === "create") {
+			console.log("create");
+			$("#measure-modal").prop("checked", true);
+		}
+	},
+});
+// start here and fix this
+function updateSelect() {
+	$.get("/getOptions", function(data) {
+	  // Clear the current options
+	  $("#mySelect").empty();
+	  
+	  // Add the new options
+	  data.forEach(function(option) {
+		$("#mySelect").append(
+		  $("<option></option>")
+			.attr("value", option.value)
+			.text(option.text)
+		);
+	  });
+	});
+}
+
+$("#submit-measure").on({
+	click: async function (e) {
+		e.preventDefault();
+
+		var url = windowdata.create;
+		const response = await fetch(url, {
+				method: "POST",
+				body: JSON.stringify({
+					action: "create",
+					type: "measure",
+					name: $("#measure-input").val(),
+				}),
+				headers: {
+					accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			})
+			.then((response) => {
+				if (response.status == 200) {
+					$("#measure-input").val("");
+					$("#cancel-measure").trigger("click");
+					return response.json();
+				}
+			})
+			.then((json) => {
+				console.log(json);
+				$("#mySelect").val("optionValue").change();
+
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	},
 });
 
 //Create order items
 $("#order-input").on({
-  keyup: function (e) {
-	if (e.keyCode === 13) {
-	  console.log(e.target.value);
-	  var item = {
-		title: e.target.value,
-		price: "550.99",
-	  };
-	  $("#tbody").append(get_row_template(item));
-	}
-  },
+	keyup: function (e) {
+		if (e.keyCode === 13) {
+			console.log(e.target.value);
+			var item = {
+				title: e.target.value,
+				price: "550.99",
+			};
+			$("#tbody").append(get_row_template(item));
+		}
+	},
 });
 
 // Jquery Dependency
 
 $("input[data-type='currency']").on({
-  keyup: function () {
-	formatCurrency($(this));
-  },
-  blur: function () {
-	formatCurrency($(this), "blur");
-  },
+	keyup: function () {
+		formatCurrency($(this));
+	},
+	blur: function () {
+		formatCurrency($(this), "blur");
+	},
 });
 
 function formatNumber(n) {
-  // format number 1000000 to 1,234,567
-  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	// format number 1000000 to 1,234,567
+	return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function formatCurrency(input, blur) {
-  // appends $ to value, validates decimal side
-  // and puts cursor back in right position.
+	// appends $ to value, validates decimal side
+	// and puts cursor back in right position.
 
-  // get input value
-  var input_val = input.val();
+	// get input value
+	var input_val = input.val();
 
-  // don't validate empty input
-  if (input_val === "") {
-	return;
-  }
-
-  // original length
-  var original_len = input_val.length;
-
-  // initial caret position
-  var caret_pos = input.prop("selectionStart");
-
-  let input_currency = "₦";
-
-  // check for decimal
-  if (input_val.indexOf(".") >= 0) {
-	// get position of first decimal
-	// this prevents multiple decimals from
-	// being entered
-	var decimal_pos = input_val.indexOf(".");
-
-	// split number by decimal point
-	var left_side = input_val.substring(0, decimal_pos);
-	var right_side = input_val.substring(decimal_pos);
-
-	// add commas to left side of number
-	left_side = formatNumber(left_side);
-
-	// validate right side
-	right_side = formatNumber(right_side);
-
-	// On blur make sure 2 numbers after decimal
-	if (blur === "blur") {
-	  right_side += "00";
+	// don't validate empty input
+	if (input_val === "") {
+		return;
 	}
 
-	// Limit decimal to only 2 digits
-	right_side = right_side.substring(0, 2);
+	// original length
+	var original_len = input_val.length;
 
-	// join number by .
-	input_val = input_currency + left_side + "." + right_side;
-  } else {
-	// no decimal entered
-	// add commas to number
-	// remove all non-digits
-	input_val = formatNumber(input_val);
-	input_val = input_currency + input_val;
+	// initial caret position
+	var caret_pos = input.prop("selectionStart");
 
-	// final formatting
-	if (blur === "blur") {
-	  input_val += ".00";
+	let input_currency = "₦";
+
+	// check for decimal
+	if (input_val.indexOf(".") >= 0) {
+		// get position of first decimal
+		// this prevents multiple decimals from
+		// being entered
+		var decimal_pos = input_val.indexOf(".");
+
+		// split number by decimal point
+		var left_side = input_val.substring(0, decimal_pos);
+		var right_side = input_val.substring(decimal_pos);
+
+		// add commas to left side of number
+		left_side = formatNumber(left_side);
+
+		// validate right side
+		right_side = formatNumber(right_side);
+
+		// On blur make sure 2 numbers after decimal
+		if (blur === "blur") {
+			right_side += "00";
+		}
+
+		// Limit decimal to only 2 digits
+		right_side = right_side.substring(0, 2);
+
+		// join number by .
+		input_val = input_currency + left_side + "." + right_side;
+	} else {
+		// no decimal entered
+		// add commas to number
+		// remove all non-digits
+		input_val = formatNumber(input_val);
+		input_val = input_currency + input_val;
+
+		// final formatting
+		if (blur === "blur") {
+			input_val += ".00";
+		}
 	}
-  }
 
-  // send updated string to input
-  input.val(input_val);
+	// send updated string to input
+	input.val(input_val);
 
-  // put caret back in the right position
-  var updated_len = input_val.length;
-  caret_pos = updated_len - original_len + caret_pos;
-  input[0].setSelectionRange(caret_pos, caret_pos);
+	// put caret back in the right position
+	var updated_len = input_val.length;
+	caret_pos = updated_len - original_len + caret_pos;
+	input[0].setSelectionRange(caret_pos, caret_pos);
 }

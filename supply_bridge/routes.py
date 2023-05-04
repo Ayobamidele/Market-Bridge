@@ -15,9 +15,10 @@ from supply_bridge.forms import (
     ResetPasswordForm,
     MessageForm,
     UserEdit,
-    PhoneChangeForm
+    PhoneChangeForm,
+    MeasureForm
 )
-from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus, Orderchema, ItemSchema
+from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus, Orderchema, ItemSchema, Measure
 from supply_bridge.email import send_password_reset_email
 from supply_bridge.decorators import authorise_order_access, unauthenticated_only
 from supply_bridge.invitation import check_connection
@@ -377,7 +378,17 @@ def create_order(username, title):
     owner = User.query.filter_by(username=username).first()
     order = Order.query.filter_by(title=title, owner=owner.id).first()
     edit = order.can_edit(current_user)
-    print(unquote(url_for('get_order', title=order.title, username=order.get_owner().username)))
+    # print(unquote(url_for('get_order', title=order.title, username=order.get_owner().username)))
+    if request.method == "POST" and request.json['type'] == "measure":
+        data = request.json
+        form = MeasureForm()
+        form.name.data = data['name']
+        if form.validate():
+            obj = Measure.create(name=data['name'])
+            flash(f"Created {obj.name} !!!","success")
+            return {"text": obj.name, "update": False}, 200
+        else:
+            return {"text": form.errors['name'][0] , 'update': True, 'name': data['name']},200
     return render_template(
         "create_list.html",
         emojis=emojis,
