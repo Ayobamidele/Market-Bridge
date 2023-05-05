@@ -18,7 +18,7 @@ from supply_bridge.forms import (
     PhoneChangeForm,
     MeasureForm
 )
-from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus, Orderchema, ItemSchema, Measure
+from supply_bridge.models import User, Group, Role, Notification, Order, OrderStatus, Orderchema, ItemSchema, Measure, MeasureSchema
 from supply_bridge.email import send_password_reset_email
 from supply_bridge.decorators import authorise_order_access, unauthenticated_only
 from supply_bridge.invitation import check_connection
@@ -382,13 +382,13 @@ def create_order(username, title):
     if request.method == "POST" and request.json['type'] == "measure":
         data = request.json
         form = MeasureForm()
-        form.name.data = data['name']
+        form.name.data = str(data['name']).title()
         if form.validate():
             obj = Measure.create(name=data['name'])
             flash(f"Created {obj.name} !!!","success")
             return {"text": obj.name, "update": False}, 200
         else:
-            return {"text": form.errors['name'][0] , 'update': True, 'name': data['name']},200
+            return {"text": form.errors['name'][0] , 'update': True, 'name': data['name'].title()},200
     return render_template(
         "create_list.html",
         emojis=emojis,
@@ -413,6 +413,13 @@ def get_order(username, title):
             }
     print(data)
     return data
+
+
+@app.route("/static/O/measure", methods=["GET", "POST"])
+@login_required
+def get_measure():
+    data = [MeasureSchema().dump(Measure.get(1))]
+    return data , 200
 
 
 @app.route("/order/<username>/<title>/edit", methods=["GET", "POST"])

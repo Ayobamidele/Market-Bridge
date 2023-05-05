@@ -492,6 +492,11 @@ class Measure(db.Model, CRUDMixin):
 	name = db.Column(db.String(20), nullable=True)
 
 
+class MeasureSchema(ma.SQLAlchemySchema):
+	class Meta:
+		fields = ('id', 'name')
+		model = Measure
+
 
 class Request(db.Model):
 	__tablename__ = "request"

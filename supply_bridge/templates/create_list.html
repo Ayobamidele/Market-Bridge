@@ -51,10 +51,88 @@
 										<select
 											class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 											<option>Choose a Measure</option>
-											<option value="Kg">Kilogram</option>
 											<option value="LT">Litre</option>
 											<option value="TC">Tin-Can</option>
-											<option value="create" class="small px-2 text-bg-primary"> <a>
+											<option id="create-btn" value="create" class="small px-2 text-bg-primary"> <a>
+
+													Not availabele? Create container
+												</a>
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="swap-off">
+									<div class="flex">
+										<span
+											class="swap-controller inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+											Price
+										</span>
+										<input type="text" name="currency-field" id="currency-field"
+											pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency"
+											class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											placeholder="0.00">
+									</div>
+								</div>
+
+							</div>
+
+						</td>
+
+
+						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+							<input type="number" min="1" step="1" data-type="quantity"
+								class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+						</td>
+
+						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+
+
+							<div class="flex -space-x-2 overflow-hidden">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+									alt="">
+								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+									src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="">
+							</div>
+
+
+						</td>
+					</tr>
+					<tr class="bg-white">
+						<td class="p-3 ed-cell text-gray-700 whitespace-nowrap">
+							<p class="text-slate-500 hover:text-primary-focus/100 fs-5 font-bold">10001</p>
+						</td>
+
+						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
+
+							<div data-id="222" class="swap swap-flip swap-container">
+
+								<div class="swap-on">
+									<div class="flex">
+										<span
+											class="swap-controller inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+											Measure
+										</span>
+
+										<input type="number" min="1" step="0.01"
+											class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											placeholder="0.00">
+
+										<select
+											class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+											<option>Choose a Measure</option>
+											<option value="LT">Litre</option>
+											<option value="TC">Tin-Can</option>
+											<option id="create-btn" value="create" class="small px-2 text-bg-primary"> <a>
 
 													Not availabele? Create container
 												</a>
@@ -179,6 +257,7 @@
 		username: "{{order.get_owner().username}}",
 		items: "{{ url_for('get_order', title=order.title, username=order.get_owner().username)|safe }}",
 		create: "{{ url_for('create_order', title=order.title, username=order.get_owner().username)|safe }}",
+		measure: "{{ url_for('get_measure')|safe }}",
 	};
 </script>
 <script src="{{ url_for('static', filename='js/tailwind.js') }}"></script>

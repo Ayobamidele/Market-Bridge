@@ -122,6 +122,7 @@ function updateOption(dropdown) {
 // - Active_changes
 // 	- modal
 // 		- All_active_users_making_changes_to_that_order_item
+var needsValueUpdate;
 
 $(".swap-controller").on({
 	click: function () {
@@ -135,25 +136,63 @@ $(".measure-options").on({
 		if (this.value === "create") {
 			console.log("create");
 			$("#measure-modal").prop("checked", true);
+			needsValueUpdate = this;
 		}
 	},
 });
-// start here and fix this
-function updateSelect() {
-	$.get("/getOptions", function(data) {
-	  // Clear the current options
-	  $("#mySelect").empty();
-	  
-	  // Add the new options
-	  data.forEach(function(option) {
-		$("#mySelect").append(
-		  $("<option></option>")
-			.attr("value", option.value)
-			.text(option.text)
-		);
-	  });
+
+function getOptions() {
+	var values = [];
+
+	$(".measure-options option").each(function () {
+		var value = $(this).val();
+		if (values.indexOf(value) === -1) {
+			values.push(value);
+		}
+	});
+	return values;
+}
+
+function addOption(text, value) {
+	var option = $("<option></option>").text(text).val(value);
+	$(".measure-options").each(function () {
+		$(this).find("option").eq(-2).before(option.clone());
 	});
 }
+
+async function updateSelect() {
+	// Get the new options
+	var url = windowdata.measure;
+	const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		})
+		.then((response) => {
+			if (response.status == 200) {
+				return response.json();
+			}
+		})
+		.then((json) => {
+			json.forEach(function (option) {
+				// Update only
+				if (!getOptions().includes(option["name"])) {
+					addOption(option["name"], option["name"]);
+				}
+			});
+		});
+}
+
+function updateNeedsValueUpdate(name) {
+	$(needsValueUpdate).val(name).change();
+	updateSelect();
+	console.log(name);
+	$(needsValueUpdate).val(name).change();
+}
+
+// setInterval(updateSelect, 3000)
 
 $("#submit-measure").on({
 	click: async function (e) {
@@ -180,14 +219,45 @@ $("#submit-measure").on({
 				}
 			})
 			.then((json) => {
-				console.log(json);
-				$("#mySelect").val("optionValue").change();
-
-			})
-			.catch((error) => {
-				console.log(error);
+				var updated = updateSelect();
+				$.when(updated).done(function () {
+					console.log(json);
+					updateNeedsValueUpdate(json["name"]);
+				});
 			});
+		// .catch((error) => {
+		// 	console.log(error);
+		// });
 	},
+});
+
+$(".ed-cell").on("click", function (e) {
+	if ($(this).find("input").length > 0) {
+        return;
+    }
+	var p = $(this).find("p");
+	if ( p.text() == "You haven't added a name yet." ){
+		p.textContent = ""
+	}
+	var input = $("<input>", {
+		val: p.text().trim(),
+		type: "text",
+		maxlength: "35",
+		placeholder:"Don't forget to Add the items name",
+		class: "rounded bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+	});
+    p.replaceWith(input);
+	input.on("blur", function () {
+		if (!this.value.replace(/\s/g, '').length) {
+		console.log('string only contains whitespace (ie. spaces, tabs or line breaks)');
+		this.value = "You haven't added a name yet."
+		}
+		var newP = $("<p></p>",{
+			class:"text-slate-500 hover:text-primary-focus/100 fs-5 font-bold",
+		}).text(this.value.trim());
+        $(this).replaceWith(newP);
+	});
+	input.focus();
 });
 
 //Create order items
