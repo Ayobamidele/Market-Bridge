@@ -11,6 +11,7 @@ import enum
 from random_username.generate import generate_username
 from decimal import Decimal 
 from sqlalchemy.types import TypeDecorator, Integer
+from marshmallow import fields
 
 
 
@@ -50,6 +51,9 @@ class OrderStatus(enum.Enum):
 class MeasurementType(enum.Enum):
 	price = "Price"
 	measure = "Measure"
+
+	def __str__(self):
+		return self.value
 
 class InvitationStatus(enum.Enum):
 	accepted = "Accepted"
@@ -454,7 +458,7 @@ class OrderItem(db.Model, CRUDMixin):
 		"Vendor", secondary=OrderItemsVendor, back_populates="order_items", uselist=True
 	)
 	orders = db.relationship(
-		"Order", secondary=OrderItems, back_populates="order_items", uselist=True
+		"Order", secondary=OrderItems, back_populates="order_items", uselist=False
 	)
 	description = db.Column(db.String(1000), nullable=True)
 	# remembet to change null to false after resetting this table
@@ -464,7 +468,6 @@ class OrderItem(db.Model, CRUDMixin):
 	measurement_type = db.Column(
 		db.Enum(MeasurementType),
 		default=MeasurementType.measure,
-		# nullable=False
 	)
 
 	
@@ -473,10 +476,14 @@ class OrderItem(db.Model, CRUDMixin):
 
 
 class ItemSchema(ma.SQLAlchemySchema):
+# pip install marshmallow_enu
+	measurement_type = fields.Enum(MeasurementType)
+	
 	class Meta:
-		fields = ('id', 'title',"vendors", "price")
 		model = OrderItem
+		fields = [column.name for column in model.__table__.columns]
 
+			
 
 class Orderchema(ma.SQLAlchemyAutoSchema):
 	order_items = ma.List(ma.Nested(ItemSchema))

@@ -5,224 +5,28 @@
 <div class="content-section d-block border border-0 p-0 px-4">
 	<div class=" h-screen bg-gray-100">
 		<div class="overflow-auto rounded-lg shadow hidden md:block">
-			<table class="w-full">
+			<table class="w-full  mb-24">
 				<thead class="bg-gray-50 border-b-2 border-gray-200">
 					<tr>
 						<th class="w-1/5 p-3 text-sm font-semibold tracking-wide text-left">
 							#Items
 						</th>
 
-						<th class="w-1/5 text-sm font-semibold tracking-wide text-center">
-							Measurement <small>based on</small><br>(Price / Measure)
-						</th>
-
-
+						
+						
 						<th class="w-1/5  p-3 text-sm font-semibold tracking-wide text-left">
 							Quantity
 						</th>
-
-						<th class="w-1/5  p-3 text-sm font-semibold tracking-wide text-left">
-							Active contibutors
+						
+						<th class="w-1/5 text-sm font-semibold tracking-wide text-center">
+							Measurement <small>based on</small><br>(Price / Measure)
 						</th>
+						
 					</tr>
 				</thead>
 
 				<tbody id="tbody" class="divide-y divide-gray-100">
-					<tr class="bg-white">
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline">10001</a>
-						</td>
 
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-
-							<div data-id="222" class="swap swap-flip swap-container">
-
-								<div class="swap-on">
-									<div class="flex">
-										<span
-											class="swap-controller inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-											Measure
-										</span>
-
-										<input type="number" min="1" step="0.01"
-											class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											placeholder="0.00">
-
-										<select
-											class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-											<option>Choose a Measure</option>
-											<option value="LT">Litre</option>
-											<option value="TC">Tin-Can</option>
-											<option id="create-btn" value="create" class="small px-2 text-bg-primary"> <a>
-
-													Not availabele? Create container
-												</a>
-											</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="swap-off">
-									<div class="flex">
-										<span
-											class="swap-controller inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-											Price
-										</span>
-										<input type="text" name="currency-field" id="currency-field"
-											pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency"
-											class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											placeholder="0.00">
-									</div>
-								</div>
-
-							</div>
-
-						</td>
-
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<input type="number" min="1" step="1" data-type="quantity"
-								class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-
-
-							<div class="flex -space-x-2 overflow-hidden">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-							</div>
-
-
-						</td>
-					</tr>
-					<tr class="bg-white">
-						<td class="p-3 ed-cell text-gray-700 whitespace-nowrap">
-							<p class="text-slate-500 hover:text-primary-focus/100 fs-5 font-bold">10001</p>
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-
-							<div data-id="222" class="swap swap-flip swap-container">
-
-								<div class="swap-on">
-									<div class="flex">
-										<span
-											class="swap-controller inline-flex items-center px-2 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-											Measure
-										</span>
-
-										<input type="number" min="1" step="0.01"
-											class="rounded-none bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											placeholder="0.00">
-
-										<select
-											class="measure-options w-auto rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-white-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-											<option>Choose a Measure</option>
-											<option value="LT">Litre</option>
-											<option value="TC">Tin-Can</option>
-											<option id="create-btn" value="create" class="small px-2 text-bg-primary"> <a>
-
-													Not availabele? Create container
-												</a>
-											</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="swap-off">
-									<div class="flex">
-										<span
-											class="swap-controller inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-											Price
-										</span>
-										<input type="text" name="currency-field" id="currency-field"
-											pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency"
-											class="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											placeholder="0.00">
-									</div>
-								</div>
-
-							</div>
-
-						</td>
-
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<input type="number" min="1" step="1" data-type="quantity"
-								class="rounded-none bg-gray-50 border text-center text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-
-
-							<div class="flex -space-x-2 overflow-hidden">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-									alt="">
-								<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-									src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-									alt="">
-							</div>
-
-
-						</td>
-					</tr>
-
-					<tr class="bg-gray-50">
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							Kring New Fit office chair, mesh + PU, black
-						</td>
-
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							16/10/2021
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">$200.00</td>
-					</tr>
-
-					<tr class="bg-white">
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<a href="#" class="font-bold text-blue-500 hover:underline">10002</a>
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							Kring New Fit office chair, mesh + PU, black
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							<span
-								class="p-1.5 text-xs font-medium uppercase tracking-wider text-gray-800 bg-gray-200 rounded-lg bg-opacity-50">Cancelled</span>
-						</td>
-
-						<td class="p-3 text-sm text-gray-700 whitespace-nowrap">
-							16/10/2021
-						</td>
-
-					</tr>
 				</tbody>
 			</table>
 		</div>
