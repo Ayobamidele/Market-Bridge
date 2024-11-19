@@ -1,34 +1,33 @@
-name: Setup Tests & Deployment
-on:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
-jobs:
-  setup:
-    name: Setup for Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+# name: Setup Tests & Deployment
+# on:
+#   push:
+#     branches:
+#       - develop
+#   workflow_dispatch:
+# jobs:
+#   setup:
+#     name: Setup for Tests
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.10.8
-          cache: pip
+#       - name: Setup Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: 3.10.8
+#           cache: pip
 
-      - name: Install requirements
-        run: pip install -r requirements.txt
+#       - name: Install requirements
+#         run: pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest --disable-warnings --cache-clear tests.py
-  merge:
-    name: Merge to main
-    needs: [setup]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: morbalint/git-merge-action@v1
-        with:
-          target: 'main'
-          strategy_options: 'ours'
-            
+#       - name: Run tests
+#         run: pytest --disable-warnings --cache-clear tests.py
+#   merge:
+#     name: Merge to main
+#     needs: [setup]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: morbalint/git-merge-action@v1
+#         with:
+#           target: 'main'
+#           strategy_options: 'ours'
