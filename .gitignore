@@ -129,7 +129,14 @@ dmypy.json
 .pyre/
 
 .flaskenv
+<<<<<<< HEAD
+
+migrations/
+
+app.db
+=======
 migrations/
 .idea/
 __pycache__/
 Dockerfile
+>>>>>>> develop

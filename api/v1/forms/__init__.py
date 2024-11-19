@@ -1,0 +1,1 @@
+from api.v1.forms.forms import RegistrationForm, LoginForm
