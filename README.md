@@ -16,25 +16,27 @@ BillDocs is a platform designed to help users create and manage invoices and rec
 To get started with BillDocs:
 
 Clone this repository
+
 ```bash
    git clone https://github.com/Ayobamidele/billdocs.git
 ```
 
 Navigate to the project directory:
 
-```
+```bash
 cd billdocs
 ```
 
 Install the required dependencies:
 
-```
+```bash
+   git clone https://github.com/Ayobamidele/billdocs.git
 pip install -r requirements.txt
 ```
 
 Start the application:
 
-```
+```bash
 python run.py
 ```
 
@@ -48,13 +50,16 @@ python run.py
 
 ## Contributing
 
-We welcome contributions! To contribute:
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+To contribute:
 
 1. Fork the repository.
 
 2. Create a new branch:
 
-```
+```bash
 git checkout -b feature/your-feature-name
 ```
 
@@ -62,13 +67,13 @@ git checkout -b feature/your-feature-name
 
 4. Commit your changes:
 
-```
+```bash
 git commit -m 'feat: Add some feature'
 ```
 
 5. Push to the branch:
 
-```
+```bash
 git push origin feature/your-feature-name
 ```
 
@@ -81,12 +86,6 @@ Please make sure to update tests as appropriate.
 - **Project Name**: Changed the project name to **BillDocs** throughout the README.
 - **Features**: Updated the features to reflect the functionality related to invoice and receipt creation, tracking, and management.
 - **Project Structure**: Adjusted the structure to align with the new focus on invoices.
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
