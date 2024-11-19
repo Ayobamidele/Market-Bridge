@@ -1,0 +1,191 @@
+{% extends "home/layout.html" %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="{{url_for('.static', filename='css/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('.static', filename='css/owl.carousel.min.css')}}">
+<style>
+	.contributor_remaining_count{
+		margin: 0 -25px;
+		padding: 3px 4px;
+	}
+	.custom-table tbody th, .custom-table tbody td{
+		padding-top: 0;
+		padding-bottom: 0;
+		padding: 0.2rem 0;
+	}
+</style>
+{% endblock %}
+{% block content %}
+<div class=" col-12 p-4 content-section d-flex">
+	<div class="rounded w-25">
+		<img class=" rounded-circle w-100" src="{{ user.image_file }}" alt="" srcset="">
+	</div>
+	<div id="user-details" class="p-3 w-75">
+		<div class=" d-flex">
+			<h1 class="mb-0 text-break text-truncate h3">{{ user.firstname }} {{ user.lastname }}</h1>
+			<a class="text-info badge mt-4" href="{{ url_for('edit_user', email=user.email) }}">
+				Edit
+			</a>
+		</div>
+		<small class=" text-truncate">{{user.email}}</small><br>
+		<small>{{user.phone_number}}</small>
+		<small class="text-muted">
+			<a class="ml-2 text-info" href="{{ url_for('change_user_phone') }}">Change</a>
+		</small><br>
+		<small>
+			<span class=" bg-success d-inline-flex rounded opacity-75"
+				style="width: 6px;height: 6px;--bs-border-opacity: .5;">
+			</span>
+			Active
+		</small>
+	</div>
+</div>
+<hr>
+<div class=" col-12 p-4 content-section d-flex mt-2">
+
+	<ul class=" w-50 m-0 list-inline content-section mx-1 ml-auto" id="groups">
+		<h3 class=" figure-caption">Groups {{ emojis.encode(':busts_in_silhouette:') }}</h3>
+		{% for group in user.groups %}
+		<li class=" list-inline-item small rounded border rounded-pill px-2">{{ group.name }}</li>
+		{% endfor %}
+	</ul>
+
+	<ul class=" w-50 m-0 list-inline content-section mx-1" id="roles">
+		<h3 class=" figure-caption">Roles {{ emojis.encode(':bust_in_silhouette:') }}</h3>
+		{% for role in user.roles %}
+		<li class=" list-inline-item small rounded border rounded-pill px-2">{{ role.name }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% if user.is_admin == True %}
+<div class="">
+	<a href="{{ url_for('send_message', recipient=user.email) }}">
+		<span class="list-group-item list-group-item-light">Send Message</span>
+	</a>
+</div>
+{% endif %}
+
+<div class="py-3 features">
+	<h3>{{ emojis.encode(':rocket:') }} Actions</h3>
+
+	<span class="list-group-item list-group-item-light btn text-left btn-light createOrder">{{ emojis.encode(':clipboard:') }} Create Order</span>
+</div>
+{% endblock %}
+{% block content2 %}
+<div id="orders" class=" py-3" >
+	<h3>{{ emojis.encode(':clipboard:') }} Orders</h3>
+	{% if orders.__len__() < 1 %}
+		<div class=" mb-4 content-section d-block py-4">
+			<p class="text-center p-3 my-auto text-black">No orders yet{{ emojis.encode(':face_with_open_eyes_and_hand_over_mouth:') }}, create one with this button</p>	
+			<span class="btn text-left createOrder justify-content-center d-flex btn-dark py-2">{{ emojis.encode(':clipboard:') }} Create Order</span>
+		</div>
+	{% else %}
+		<div class=" content-section d-block" >
+			<div class="table-responsive">
+
+				<table class="table  table-striped custom-table">
+					<thead>
+						<tr>
+							<th scope="col">Order</th>
+							<th scope="col">Status</th>
+							<th scope="col">Date Created</th>
+							<th scope="col">Contributors</th>
+							<th scope="col">Suppliers</th>
+						</tr>
+					</thead>
+					<tbody  style="height: 300px;overflow-y: scroll;">
+						{% for order in orders %}
+						<tr class=" clickable-row cursor-pointer" data-href="{{ order.link }}">
+							<td>
+								{{order.title}}
+							</td>
+							<td>
+								<p class=" col-auto text-center badge badge-info text-bg-warning text-capitalize">
+									{{order.status}}
+								</p>
+							</td>
+							<td>{{ order.date_created }}</td>
+							<td class=" px-lg-4">
+								<ul class="persons">
+									{% if order.contributors.__len__() <= limit %}
+										{% for contributor in order.contributors %}
+										<li class=" ">
+											<a href="#">
+											<img src="{{ contributor.image_file }}" alt="{{ contributor.username }}"
+												class="img-fluid">
+											</a>
+										</li>
+										{% endfor %}
+									{% else %}
+									{% for contributor in order.contributors[0:limit] %}
+									<li class=" ">
+										<a href="#">
+										<img src="{{ contributor.image_file }}" alt="{{ contributor.username }}"
+											class="img-fluid">
+										</a>
+									</li>
+									{% endfor %}
+									<a href="">
+											<span class=" rounded-pill text-capitalize text-white bg-danger rounded-circle contributor_remaining_count">
+												+{{ order.contributors.__len__() - limit}}
+											</span>
+										</a>
+									{% endif %}
+								</a>
+								</ul>
+							</td>
+							<td>
+								<ul class="">
+									{% if order.suppliers.__len__() > 0 %}
+										
+									{% for supplier in order.suppliers %}
+									<li>
+										<a href="#">
+											
+											<img src="{{ contributor.image_file }}" alt="Person" class="img-fluid">
+										</a>
+									</li>
+									{% endfor %} 
+									{% else %}
+										<p class="mx-auto">None have been assigned yet.</p>
+									{% endif %}
+
+								</ul>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	$(".createOrder").click(async function () {
+		const data = {
+			"create": true
+		}
+		const url = "{{ url_for('user') }}"
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
+		if (response.status === 200) {
+			url1 = (response.url)
+			$(location).attr('href', url1)
+		}
+	});
+	jQuery(document).ready(function ($) {
+		$(".clickable-row").click(function () {
+			window.location = $(this).data("href");
+		});
+	});
+</script>
+{% endblock %}
